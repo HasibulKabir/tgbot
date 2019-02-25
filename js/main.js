@@ -1,3 +1,6 @@
+"use strict";
+
+
 var botToken = "";
 var updateOffset = -1;
 var updateAnalyzer;
