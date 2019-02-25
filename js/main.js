@@ -54,7 +54,7 @@ function updateCommands(doLog = true) {
   if(doLog) log("Aggiornamento lista comandi in corso...");
   commands = {};
   var commandsString = $("#commands").val();
-  var c = commandsString.split(";");
+  var c = commandsString.split(/;$/gm);
   for(var command in c) {
     if(c[command].charAt(0) === "\n") c[command] = c[command].substr(1);
     var commandArr = c[command].split(" > ");
