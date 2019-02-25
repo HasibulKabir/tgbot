@@ -78,7 +78,7 @@ function startUpdateAnalyzer() {
       log("Errore nella connessione: "+response+"\nPossibile token errato.");
       $("#stopBot").addClass("disabled");
       $("#startBot").removeClass("disabled");
-      clearInterval(updateAnalyzer);
+      started = 0;
     },
     success: function(response) {
       var update = {};
