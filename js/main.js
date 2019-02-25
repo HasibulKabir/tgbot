@@ -4,7 +4,7 @@
 var botToken = "";
 var updateOffset = -1;
 var updateAnalyzer;
-var cookies = getCookies();
+var cookies = localStorage;
 var commands = {};
 var started = 0;
 $(document).ready(function() {
@@ -60,7 +60,7 @@ function updateCommands(doLog = true) {
     var commandArr = c[command].split(" > ");
     commands[commandArr[0]] = commandArr[1];
   }
-  setCookie("commands", $("#commands").val().split("\n").join("///////////"), 30);
+  localStorage.setItem("commands", $("#commands").val().replace(/\n/g, "///////////"));
   if(doLog) log("Aggiornamento lista comandi completato!");
   $(this).removeClass("disabled");
 }
@@ -90,8 +90,8 @@ function startUpdateAnalyzer() {
         updateOffset++;
       }
       if(started == 0) {
-        setCookie("botToken", $("#token").val(), 30);
-        setCookie("botSettings", JSON.stringify({
+        localStorage.setItem("botToken", $("#token").val());
+        localStorage.setItem("botSettings", JSON.stringify({
           parseMode: $("#parseMode").val(),
           wpPreview: $("#wpPreview").val()
         }));
@@ -128,25 +128,4 @@ function analyzeUpdate(update) {
       },
     });
   }
-}
-function setCookie(name, value, exdays) {
-  var d = new Date();
-  d.setTime(d.getTime() + (exdays*24*60*60*1000));
-  var expires = "expires=" + d.toGMTString();
-  document.cookie = name + "=" + value + ";" + expires + ";path=./tg-js-bot";
-}
-
-function getCookies() {
-  var cookies = decodeURIComponent(document.cookie);
-  var splittedCookies = cookies.split(";");
-  var cookiesArr = {};
-  splittedCookies.forEach(function(cookie) {
-    if(cookie.charAt(0) == " ") {
-      cookie = cookie.substr(1);
-    }
-    var name = cookie.split("=", 1)[0];
-    var value = cookie.substr((name+"=").length);
-    cookiesArr[name] = value;
-  });
-  return cookiesArr;
 }
