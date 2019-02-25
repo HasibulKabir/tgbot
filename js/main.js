@@ -10,7 +10,7 @@ var started = 0;
 $(document).ready(function() {
   if("commands" in cookies) {
     $("#commands").val(cookies["commands"].split("///////////").join("\n"));
-  } else $("#commands").val("/start > Messaggio di avvio!\n/help > Menù di aiuto!");
+  } else $("#commands").val("/start > Messaggio di avvio!;\n/help > Menù di aiuto!;");
   if("botToken" in cookies) {
     $("#token").val(cookies["botToken"]);
   }
@@ -54,12 +54,13 @@ function updateCommands(doLog = true) {
   if(doLog) log("Aggiornamento lista comandi in corso...");
   commands = {};
   var commandsString = $("#commands").val();
-  var c = commandsString.split("\n");
+  var c = commandsString.split(";");
   for(var command in c) {
+    if(c[command].charAt(0) === "\n") c[command] = c[command].substr(1);
     var commandArr = c[command].split(" > ");
     commands[commandArr[0]] = commandArr[1];
   }
-                setCookie("commands", $("#commands").val().split("\n").join("///////////"), 30);
+  setCookie("commands", $("#commands").val().split("\n").join("///////////"), 30);
   if(doLog) log("Aggiornamento lista comandi completato!");
   $(this).removeClass("disabled");
 }
@@ -136,15 +137,16 @@ function setCookie(name, value, exdays) {
 }
 
 function getCookies() {
-  var cookies = document.cookie;
+  var cookies = decodeURIComponent(document.cookie);
   var splittedCookies = cookies.split(";");
   var cookiesArr = {};
   splittedCookies.forEach(function(cookie) {
     if(cookie.charAt(0) == " ") {
       cookie = cookie.substr(1);
     }
-    var splittedValIndex = cookie.split("=");
-    cookiesArr[splittedValIndex[0]] = splittedValIndex[1];
+    var name = cookie.split("=", 1)[0];
+    var value = cookie.substr((name+"=").length);
+    cookiesArr[name] = value;
   });
   return cookiesArr;
 }
