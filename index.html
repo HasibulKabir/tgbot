@@ -17,29 +17,48 @@
         <a href="#" class="brand-logo center">Easy JS Bot</a>
       </div>
     </nav>
-    <div class="content wrapper card-panel">
-      <div class="row">
-        <i class="material-icons right tooltipped black-text"
-          data-tooltip="Inserisci qui il token che ti è stato inviato da @BotFather su Telegram"
-          data-position="bottom">help_outline</i>
-        <div class="input-field col s12">
-          <input id="token" type="text" class="validate" required>
-          <label for="token">Token del bot</label>
+    <div class="container">
+      <div class="card-panel">
+        <div class="row">
+          <i class="material-icons right tooltipped black-text"
+            data-tooltip="Inserisci qui il token che ti è stato inviato da @BotFather su Telegram"
+            data-position="bottom">help_outline</i>
+          <div class="input-field col s12">
+            <input id="token" type="text" class="validate" required>
+            <label for="token">Token del bot</label>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="input-field col s12">
-          <textarea id="commands" class="materialize-textarea"></textarea>
-          <label for="commands">Comandi del bot</label>
+        <div class="row">
+          <div class="input-field col s12">
+            <textarea id="commands" class="materialize-textarea"></textarea>
+            <label for="commands">Comandi del bot</label>
+          </div>
         </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <select id="parseMode">
+              <option value="" selected>None</option>
+              <option value="HTML">HTML</option>
+              <option value="Markdown">Markdown</option>
+            </select>
+            <label for="parseMode">Parse Mode</label>
+          </div>
+          <div class="input-field col s6">
+            <select id="wpPreview">
+              <option value="false" selected>No</option>
+              <option value="true">Yes</option>
+            </select>
+            <label for="wpPreview">Disable Web Page Preview</label>
+          </div>
+        </div>
+        <div class="row">
+          <label for="console">Console</label>
+          <textarea id="console" disabled></textarea>
+        </div>
+        <button class="btn waves-effect waves-light" id="updateCommands">Aggiorna lista comandi</button>
+        <button class="btn waves-effect waves-light" id="startBot">Avvia!</button>
+        <button class="btn waves-effect waves-light disabled" id="stopBot">Arresta</button>
       </div>
-      <div class="row">
-        <label for="console">Console</label>
-        <textarea id="console" disabled></textarea>
-      </div>
-      <button class="btn waves-effect waves-light" id="updateCommands">Aggiorna lista comandi</button>
-      <button class="btn waves-effect waves-light" id="startBot">Avvia!</button>
-      <button class="btn waves-effect waves-light disabled" id="stopBot">Arresta</button>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" defer></script>
