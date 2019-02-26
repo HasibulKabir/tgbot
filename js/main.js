@@ -221,7 +221,7 @@ function sendMessage(chat_id, messageText, doLog = false, parse_mode = false) {
       },
       dataType: "json",
       success: function(response) {
-        if(doLog) log(messageText, "[Messaggio inviato: "+chat_id+"]");
+        if(doLog) log(response.result.text, "[Messaggio inviato: "+chat_id+"]");
       },
       error: function(xhr) {
         var response = xhr.responseText;
