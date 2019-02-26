@@ -20,14 +20,15 @@ $(document).ready(function() {
   $("#parseMode").on("change", updateBotSettings);
   $("#wpPreview").on("change", updateBotSettings);
   $("#consoleCommandsGo").click(function() {
-    var command = $("#consoleCommands");
-    lastCommand = command.val();
-    switch(command.val().split(" ",1)[0]) {
+    var commandI = $("#consoleCommands");
+    var command = commandI.val().replace(/\\n/g, "\n")
+    lastCommand = commandI.val();
+    switch(commandI.val().split(" ",1)[0]) {
       case "/help":
         log("Menù comandi:\n/help: visualizza questo menù di aiuto\n/select <chat_id>: seleziona chat in cui inviare i messaggi\n<messaggio>: invia messaggio nella chat_id selezionata", "");
         break;
       case "/select":
-        var cId = command.val().split(" ");
+        var cId = commandI.val().split(" ");
         if (1 in cId) {
           selectedChatId = cId[1];
           log("Selezionato "+selectedChatId+"!");
@@ -41,17 +42,20 @@ $(document).ready(function() {
         }
         break;
       default:
-        if(command.val().charAt(0) == "/")
+        if(commandI.val().charAt(0) == "/")
           log("Comando non valido.", "[ERRORE]");
         else {
           if (selectedChatId != 0) {
-            sendMessage(selectedChatId, command.val(), true);
+            if(command.length <= 4096)
+              sendMessage(selectedChatId, command, true);
+            else
+              log("Messaggio troppo lungo. Caratteri massimi consentiti: 4096 caratteri.", "[ERRORE]");
           } else
             log("Per favore, prima di tentare di inviare un messaggio, usa /select", "[ERRORE]");
         }
         break;
     }
-    command.val("");
+    commandI.val("");
   });
   $("#consoleCommands").keyup(function(e) {
     if(e.keyCode == 13) {
@@ -121,6 +125,7 @@ $(document).ready(function() {
   $("#console").val("");
   $(".tooltipped").tooltip();
   $('select').formSelect();
+  $('input#consoleCommands').characterCounter();
   updateCommands(false);
 });
 function updateCommands(doLog = true) {
