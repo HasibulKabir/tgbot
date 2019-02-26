@@ -16,6 +16,7 @@ function log(text, prefix = "[INFO]") {
 }
 $(document).ready(function() {
   $("#autoStart").on("change", updateBotSettings);
+  $("#logAllMsg").on("change", updateBotSettings);
   $("#parseMode").on("change", updateBotSettings);
   $("#wpPreview").on("change", updateBotSettings);
   $("#consoleCommandsGo").click(function() {
@@ -29,7 +30,7 @@ $(document).ready(function() {
         var cId = command.val().split(" ");
         if (1 in cId) {
           selectedChatId = cId[1];
-          log("Selezionato "+selectedChatId+"!", "[!]");
+          log("Selezionato "+selectedChatId+"!");
           updateBotSettings();
         } else {
           if(selectedChatId) {
@@ -44,7 +45,6 @@ $(document).ready(function() {
           log("Comando non valido.", "[ERRORE]");
         else {
           if (selectedChatId != 0) {
-            log("Invio del messaggio in "+selectedChatId+"...");
             sendMessage(selectedChatId, command.val(), true);
           } else
             log("Per favore, prima di tentare di inviare un messaggio, usa /select", "[ERRORE]");
@@ -107,12 +107,14 @@ $(document).ready(function() {
         }, 3000);
       }
     }
-    if ("selectedChatId" in bSettings) {
+    if ("selectedChatId" in bSettings && bSettings["selectedChatId"] != 0) {
       selectedChatId = bSettings["selectedChatId"];
       setTimeout(function() {
         log("Selezionata chat_id "+selectedChatId+" come da sessione precedente.");
       }, 1000)
     }
+    if ("logAllMsg" in bSettings)
+      $("#logAllMsg").prop("checked", bSettings["logAllMsg"]);
   }
   M.textareaAutoResize($('#commands'));
   M.updateTextFields();
@@ -147,7 +149,7 @@ function startUpdateAnalyzer() {
     dataType: "json",
     error: function(xhr) {
       var response = xhr.responseText;
-      log("Errore nella connessione: "+response+"\nPossibile token errato.");
+      log("Errore nella connessione: "+response+"\nPossibile token errato.", "[ERRORE]");
       $("#stopBot").addClass("disabled");
       $("#startBot").removeClass("disabled");
       started = 0;
@@ -157,7 +159,6 @@ function startUpdateAnalyzer() {
       if(response["result"] !== [] && response["result"] && response["result"].length > 0) {
         update = response["result"][0];
         updateOffset = update["update_id"];
-        log("Analisi update #"+updateOffset);
         analyzeUpdate(update);
         updateOffset++;
       }
@@ -181,14 +182,15 @@ function updateBotSettings() {
       parseMode: $("#parseMode").val(),
       wpPreview: $("#wpPreview").val(),
       autoStart: $("#autoStart").prop("checked"),
+      logAllMsg: $("#logAllMsg").prop("checked"),
       selectedChatId: selectedChatId
     }));
 }
 function analyzeUpdate(update) {
   var text = update["message"]["text"];
   var chat_id = update["message"]["chat"]["id"];
-  if(selectedChatId == chat_id) {
-    log(text, "[M: "+update.message.from.first_name+(update.message.from.last_name ? " "+update.message.from.last_name : "")+"]")
+  if(selectedChatId == chat_id || $("#logAllMsg").prop("checked")) {
+    log(text, "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+update.message.from.first_name+(update.message.from.last_name ? " "+update.message.from.last_name : "")+"]")
   }
   if(text == "/chatid") {
     sendMessage(chat_id, "ID del gruppo: <code>"+chat_id+"</code>", false, "HTML");
@@ -214,7 +216,7 @@ function sendMessage(chat_id, messageText, doLog = false, parse_mode = false) {
       },
       dataType: "json",
       success: function(response) {
-        if(doLog) log("Messaggio inviato in "+chat_id, "[!]");
+        if(doLog) log(messageText, "[Messaggio inviato: "+chat_id+"]");
       },
       error: function(xhr) {
         var response = xhr.responseText;
