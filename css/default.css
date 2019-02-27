@@ -1,3 +1,6 @@
+.botSettings * {
+  display: inline-block;
+}
 #consoleContainer {
   /* border: 1px solid #95a5a6; */
   background-color: #000;

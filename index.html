@@ -71,7 +71,7 @@
             <button class="btn waves-effect waves-light" id="stopBot" disabled>Arresta</button>
           </div>
         </div>
-        <div class="row">
+        <div class="row botSettings">
           <div class="col s12">
             <div class="switch">
               <label for="autoStart">Avvia automaticamente il bot al caricamento della pagina</label>
@@ -79,14 +79,21 @@
                 <input type="checkbox" id="autoStart">
                 <span class="lever"></span>
               </label>
-            </div>
+            </div><br />
             <div class="switch">
               <label for="logAllMsg">Logga i messaggi da qualsiasi chat</label>
               <label>
                 <input type="checkbox" id="logAllMsg">
                 <span class="lever"></span>
               </label>
-            </div>
+            </div><br />
+            <div class="switch tooltipped" data-tooltip="Non consigliato su computer lenti, rimuove il timeout di 500 millisecondi nell'update analyzer." data-position="right">
+              <label for="ufUpdAnalyzer">Ultra fast update analyzer</label>
+              <label>
+                <input type="checkbox" id="ufUpdAnalyzer">
+                <span class="lever"></span>
+              </label>
+            </div><br />
           </div>
         </div>
       </div>

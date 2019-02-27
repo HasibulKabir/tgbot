@@ -19,6 +19,7 @@ $(document).ready(function() {
   $("#logAllMsg").on("change", updateBotSettings);
   $("#parseMode").on("change", updateBotSettings);
   $("#wpPreview").on("change", updateBotSettings);
+  $("#ufUpdAnalyzer").on("change", updateBotSettings);
   $("#consoleCommandsGo").click(function() {
     var commandI = $("#consoleCommands");
     var command = commandI.val().replace(/\\n/g, "\n")
@@ -82,7 +83,7 @@ $(document).ready(function() {
     if(botToken != "" && botToken) {
       $("#startBot").prop("disabled", true);
       log("Avviando il bot... Connessione in corso ai server telegram...", "[INFO]", "blue-text");
-      startUpdateAnalyzer();
+      setTimeout(startUpdateAnalyzer, 0);
     } else {
       log("Bot non avviato! Bot token vuoto!", "[ERRORE]", "red-text");
     }
@@ -132,6 +133,8 @@ $(document).ready(function() {
     }
     if ("logAllMsg" in bSettings)
       $("#logAllMsg").prop("checked", bSettings["logAllMsg"]);
+    if ("ufUpdAnalyzer" in bSettings)
+      $("#ufUpdAnalyzer").prop("checked", bSettings["ufUpdAnalyzer"]);
   }
   M.textareaAutoResize($('#commands'));
   M.updateTextFields();
@@ -190,7 +193,7 @@ function startUpdateAnalyzer() {
         $("#startBot").prop("disabled", false);
         log("Bot arrestato!", "[INFO]", "blue-text");
         started = 0;
-      } else setTimeout(startUpdateAnalyzer, 500);
+      } else setTimeout(startUpdateAnalyzer, ($("#ufUpdAnalyzer").prop("checked")) ? 0 : 500);
     }
   });
 }
@@ -201,7 +204,8 @@ function updateBotSettings() {
       wpPreview: $("#wpPreview").val(),
       autoStart: $("#autoStart").prop("checked"),
       logAllMsg: $("#logAllMsg").prop("checked"),
-      selectedChatId: selectedChatId
+      ufUpdAnalyzer: $("#ufUpdAnalyzer").prop("checked"),
+      selectedChatId: selectedChatId,
     }));
 }
 function analyzeUpdate(update) {
