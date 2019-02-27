@@ -15,9 +15,6 @@ function log(text, prefix = "[INFO]", classes = "white-text") {
   consoleElem.scrollTop(consoleElem[0].scrollHeight - consoleElem.height());
 }
 $(document).ready(function() {
-  setTimeout(function() {
-    log("Simulatore di console. /help per i comandi", "")
-  }, 0);
   $("#autoStart").on("change", updateBotSettings);
   $("#logAllMsg").on("change", updateBotSettings);
   $("#parseMode").on("change", updateBotSettings);
@@ -51,10 +48,13 @@ $(document).ready(function() {
             log("Comando non valido. /help per una lista completa di comandi.", "[ERRORE]", "red-text");
           else {
             if (selectedChatId != 0) {
-              if(command.length <= 4096)
-                sendMessage(selectedChatId, command, true);
+              if(command.replace(new RegExp(" ", "g"), "").length > 0)
+                if(command.length <= 4096)
+                  sendMessage(selectedChatId, command, true);
+                else
+                  log("Messaggio troppo lungo. Caratteri massimi consentiti: 4096 caratteri.", "[ERRORE]", "red-text");
               else
-                log("Messaggio troppo lungo. Caratteri massimi consentiti: 4096 caratteri.", "[ERRORE]", "red-text");
+                log("Messaggio nullo.", "[ERRORE]", "red-text");
             } else
               log("Per favore, prima di tentare di inviare un messaggio, usa /select", "[ERRORE]", "red-text");
           }
@@ -175,7 +175,8 @@ function startUpdateAnalyzer() {
       }
       if(started == 0) {
         localStorage.setItem("botToken", $("#token").val());
-        log("Bot avviato! Attenzione: Se chiudi questa pagina, verrà anche arrestato il tuo bot!", "[INFO]", "green-text");
+        log("Bot avviato! Attenzione: Se chiudi questa pagina, verrà anche arrestato il tuo bot!", "[INFO]", "blue-text");
+        log("/help per i comandi della console.");
         $("#stopBot").prop("disabled", false);
         started = 1;
       }
