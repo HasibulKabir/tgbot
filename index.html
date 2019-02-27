@@ -3,6 +3,22 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, shrink-to-fit=no" />
+    <meta name="author" content="ItzPatoo">
+    <meta name="og:title" content="Easy Telegram bot in JS">
+    <meta name="og:description" content="Con questo sito puoi creare facilmente un bot telegram con il semplicissimo utilizzo del tuo browser! Presente anche la console per inviare messaggi e riceverli!">
+    <meta name="description" content="Con questo sito puoi creare facilmente un bot telegram con il semplicissimo utilizzo del tuo browser! Presente anche la console per inviare messaggi e riceverli!">
+    <meta name="application-name" content="Easy Telegram bot in JS">
+    <meta name="keywords" content="TelegramBotJS JSTelegramBot TelegramBot Telegram Bot Javascript">
+
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="TelegramJSBot">
+    <meta name="apple-mobile-web-app-title" content="TelegramJSBot">
+    <meta name="theme-color" content="#1e88e5">
+    <meta name="msapplication-navbutton-color" content="#1e88e5">
+    <meta name="apple-mobile-web-app-status-bar-style" content="blue">
+    <meta name="msapplication-starturl" content="/tg-js-bot/">
+
     <title>Telegram JS Easy Bot</title>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" as="style">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="preload" as="style">
@@ -12,88 +28,91 @@
     <link rel="stylesheet" href="css/default.css">
   </head>
   <body>
-    <nav>
-      <div class="nav-wrapper">
-        <a href="#" class="brand-logo center">Easy JS Bot</a>
-      </div>
-    </nav>
-    <div class="container">
-      <div class="card-panel">
-        <div class="row">
-          <i class="material-icons right tooltipped black-text"
-            data-tooltip="Inserisci qui il token che ti è stato inviato da @BotFather su Telegram"
-            data-position="bottom">help_outline</i>
-          <div class="input-field col s12">
-            <input id="token" type="text" class="validate" required>
-            <label for="token">Token del bot</label>
-          </div>
+    <div id="loader"></div>
+    <div id="content" style="display: none;">
+      <nav class="blue darken-1">
+        <div class="nav-wrapper">
+          <a href="#" class="brand-logo center">Easy JS Bot</a>
         </div>
-        <div class="row">
-          <div class="input-field col s12">
-            <textarea id="commands" class="materialize-textarea"></textarea>
-            <label for="commands">Comandi del bot</label>
+      </nav>
+      <div class="container">
+        <div class="card-panel">
+          <div class="row">
+            <i class="material-icons right tooltipped black-text"
+              data-tooltip="Inserisci qui il token che ti è stato inviato da @BotFather su Telegram"
+              data-position="bottom">help_outline</i>
+            <div class="input-field col s12">
+              <input id="token" type="text" class="validate" required>
+              <label for="token">Token del bot</label>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s6">
-            <select id="parseMode">
-              <option value="" selected>None</option>
-              <option value="HTML">HTML</option>
-              <option value="Markdown">Markdown</option>
-            </select>
-            <label for="parseMode">Parse Mode</label>
+          <div class="row">
+            <div class="input-field col s12">
+              <textarea id="commands" class="materialize-textarea"></textarea>
+              <label for="commands">Comandi del bot</label>
+            </div>
           </div>
-          <div class="input-field col s6">
-            <select id="wpPreview">
-              <option value="false" selected>No</option>
-              <option value="true">Yes</option>
-            </select>
-            <label for="wpPreview">Disable Web Page Preview</label>
+          <div class="row">
+            <div class="input-field col s6">
+              <select id="parseMode">
+                <option value="" selected>None</option>
+                <option value="HTML">HTML</option>
+                <option value="Markdown">Markdown</option>
+              </select>
+              <label for="parseMode">Parse Mode</label>
+            </div>
+            <div class="input-field col s6">
+              <select id="wpPreview">
+                <option value="false" selected>No</option>
+                <option value="true">Yes</option>
+              </select>
+              <label for="wpPreview">Disable Web Page Preview</label>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col s12">
-            <label>Console</label>
-            <div id="consoleContainer">
-              <div id="console"></div>
-              <div id="consoleCommandsContainer">
-                <span id="consoleSymbol">&gt;</span>
-                <input id="consoleCommands" class="browser-default" type="text" data-length="4096">
-                <button id="consoleCommandsGo"><i class="material-icons">send</i></button>
+          <div class="row">
+            <div class="col s12">
+              <label>Console</label>
+              <div id="consoleContainer">
+                <div id="console"></div>
+                <div id="consoleCommandsContainer">
+                  <span id="consoleSymbol">&gt;</span>
+                  <input id="consoleCommands" class="browser-default" type="text" data-length="4096">
+                  <button id="consoleCommandsGo"><i class="material-icons">send</i></button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col s12">
-            <button class="btn waves-effect waves-light" id="updateCommands" style="display: none;">Aggiorna lista comandi</button>
-            <button class="btn waves-effect waves-light" id="startBot">Avvia!</button>
-            <button class="btn waves-effect waves-light" id="stopBot" disabled>Arresta</button>
+          <div class="row">
+            <div class="col s12">
+              <button class="btn blue waves-effect waves-light" id="updateCommands" style="display: none;">Aggiorna lista comandi</button>
+              <button class="btn blue waves-effect waves-light" id="startBot">Avvia!</button>
+              <button class="btn blue waves-effect waves-light" id="stopBot" disabled>Arresta</button>
+            </div>
           </div>
-        </div>
-        <div class="row botSettings">
-          <div class="col s12">
-            <div class="switch">
-              <label for="autoStart">Avvia automaticamente il bot al caricamento della pagina</label>
-              <label>
-                <input type="checkbox" id="autoStart">
-                <span class="lever"></span>
-              </label>
-            </div><br />
-            <div class="switch">
-              <label for="logAllMsg">Logga i messaggi da qualsiasi chat</label>
-              <label>
-                <input type="checkbox" id="logAllMsg">
-                <span class="lever"></span>
-              </label>
-            </div><br />
-            <div class="switch tooltipped" data-tooltip="Non consigliato su computer lenti, rimuove il timeout di 500 millisecondi nell'update analyzer." data-position="right">
-              <label for="ufUpdAnalyzer">Ultra fast update analyzer</label>
-              <label>
-                <input type="checkbox" id="ufUpdAnalyzer">
-                <span class="lever"></span>
-              </label>
-            </div><br />
+          <div class="row botSettings">
+            <div class="col s12">
+              <div class="switch">
+                <label for="autoStart">Avvia automaticamente il bot al caricamento della pagina</label>
+                <label>
+                  <input type="checkbox" id="autoStart">
+                  <span class="lever"></span>
+                </label>
+              </div><br />
+              <div class="switch">
+                <label for="logAllMsg">Logga i messaggi da qualsiasi chat</label>
+                <label>
+                  <input type="checkbox" id="logAllMsg">
+                  <span class="lever"></span>
+                </label>
+              </div><br />
+              <div class="switch tooltipped" data-tooltip="Non consigliato su computer lenti, rimuove il timeout di 500 millisecondi nell'update analyzer." data-position="right">
+                <label for="ufUpdAnalyzer">Ultra fast update analyzer</label>
+                <label>
+                  <input type="checkbox" id="ufUpdAnalyzer">
+                  <span class="lever"></span>
+                </label>
+              </div><br />
+            </div>
           </div>
         </div>
       </div>
