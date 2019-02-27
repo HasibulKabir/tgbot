@@ -53,20 +53,20 @@
         </div>
         <div class="row">
           <div class="col s12">
-            <label for="console">Console</label>
-            <textarea id="console" disabled></textarea>
-            <div class="input-field col s10">
-              <input id="consoleCommands" type="text" data-length="4096">
-              <label for="consoleCommands">CONSOLE (/help)</label>
+            <label>Console</label>
+            <div id="consoleContainer">
+              <div id="console"></div>
+              <span id="consoleSymbol">&gt;</span>
+              <input id="consoleCommands" class="browser-default" type="text" data-length="4096">
+              <button id="consoleCommandsGo"><i class="material-icons">send</i></button>
             </div>
-            <button class="btn waves-effect waves-light col s2 input-field" id="consoleCommandsGo"><i class="material-icons">send</i></button>
           </div>
         </div>
         <div class="row">
           <div class="col s12">
-            <button class="btn waves-effect waves-light" id="updateCommands">Aggiorna lista comandi</button>
+            <button class="btn waves-effect waves-light" id="updateCommands" style="display: none;">Aggiorna lista comandi</button>
             <button class="btn waves-effect waves-light" id="startBot">Avvia!</button>
-            <button class="btn waves-effect waves-light disabled" id="stopBot">Arresta</button>
+            <button class="btn waves-effect waves-light" id="stopBot" disabled>Arresta</button>
           </div>
         </div>
         <div class="row">
