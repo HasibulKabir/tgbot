@@ -8,39 +8,51 @@
   width: 100%;
   color: #000;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-  line-height: 19px;
+  line-height: 18px;
 }
 #console {
   width: 100%;
-  height: 88%;
+  height: 84%;
   background-color: inherit;
   overflow-y: scroll;
 }
+#consoleCommandsContainer {
+  display: block;
+  padding: 1%;
+  height: 16%;
+  background: #000;
+  border-radius: 3px;
+  transition: background .7s;
+}
+#consoleCommands:focus {
+  outline: none;
+}
 #consoleCommands {
   display: inline-block;
-  background: #000;
+  background: transparent;
   border: 0;
   width: 83%;
-  height: 10%;
+  height: 100%;
   color: #fff;
   font-size: 14px;
 }
 #consoleSymbol {
   display: inline-block;
-  width: 2%;
-  height: 10%;
+  width: 3%;
+  height: 100%;
   font-size: 17px;
   color: #fff;
   text-align: center;
   margin-right: 1%;
+  background: transparent;
 }
 #consoleCommandsGo {
   display: inline-block;
-  background: #000;
+  background: transparent;
   color: #fff;
   border: 0;
   width: 10%;
-  height: 10%;
+  height: 100%;
   text-align: center;
   float: right;
 }

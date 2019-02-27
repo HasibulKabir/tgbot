@@ -64,6 +64,12 @@ $(document).ready(function() {
       }
     commandI.val("");
   });
+  $("#consoleCommands").focus(function() {
+    $("#consoleCommandsContainer").css("background", "rgb(15, 15, 15)");
+  });
+  $("#consoleCommands").blur(function() {
+    $("#consoleCommandsContainer").css("background", "#000");
+  });
   $("#consoleCommands").keyup(function(e) {
     if(e.keyCode == 13) {
       $("#consoleCommandsGo").click();
