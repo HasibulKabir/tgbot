@@ -138,7 +138,7 @@ $(document).ready(function() {
   }
   M.textareaAutoResize($('#commands'));
   M.updateTextFields();
-  $("#console").val("");
+  $("#console").html("");
   $(".tooltipped").tooltip();
   $('select').formSelect();
   updateCommands(false);
@@ -213,10 +213,32 @@ function updateBotSettings() {
     }));
 }
 function analyzeUpdate(update) {
-  var text = update["message"]["text"];
-  var chat_id = update["message"]["chat"]["id"];
+  var text = "";
+  var message;
+  var chat_id = 0
+  var name = "";
+  if ("message" in update)
+    message = update["message"];
+  else
+    message = {};
+  if ("chat" in message)
+    chat_id = update["message"]["chat"]["id"];
+  else {
+    log("Messaggio non supportato", "[WARNING]", "yellow-text");
+    return false;
+  }
+  if ("text" in message)
+    text = message["text"];
+  else
+    text = "Messaggio non supportato.";
+  if("from" in message) {
+    if ("first_name" in message["from"])
+      name = message["from"]["first_name"];
+    if("last_name" in message["from"])
+      name += message["from"]["last_name"];
+  }
   if(selectedChatId == chat_id || $("#logAllMsg").prop("checked")) {
-    log(text, "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+update.message.from.first_name+(update.message.from.last_name ? " "+update.message.from.last_name : "")+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"))
+    log(text, "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"))
   }
   if(text == "/chatid") {
     sendMessage(chat_id, "ID del gruppo: <code>"+chat_id+"</code>", false, "HTML");
