@@ -23,6 +23,7 @@
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" as="style">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="preload" as="style">
     <link rel="preload" href="css/default.css" as="style">
+    <link rel="preload" href="../css/default.css" as="style">
     <link rel="icon" href="icons/logo-128.png" sizes="128x128" type="image/png">
     <link rel="icon" href="icons/logo-64.png" sizes="64x64" type="image/png">
     <link rel="icon" href="icons/logo-32.png" sizes="32x32" type="image/png">
@@ -30,13 +31,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="css/default.css">
+    <link rel="stylesheet" href="../css/default.css">
   </head>
   <body>
     <div id="loader"></div>
-    <div id="content" style="display: none;">
+    <main>
       <nav class="blue darken-1">
         <div class="nav-wrapper">
           <a href="#" class="brand-logo center">Easy JS Bot</a>
+          <a href="#" data-target="sidebar-slide" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
         </div>
       </nav>
       <div class="container">
@@ -120,9 +123,14 @@
           </div>
         </div>
       </div>
-    </div>
+    </main>
+    <ul id="sidebar-slide" class="sidenav sidenav-fixed">
+      <li><a class="waves-effect" href="/tg-js-bot"><i class="material-icons left">sms</i>Easy Telegram Bot</a></li>
+      <li><a class="waves-effect" href="/PatoBot"><i class="material-icons left">code</i>PatoBot</a></li>
+    </ul>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" defer></script>
     <script src="js/main.js" defer></script>
+    <script src="../js/main.js" defer></script>
   </body>
 </html>

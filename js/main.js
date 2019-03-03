@@ -142,10 +142,6 @@ $(document).ready(function() {
   $(".tooltipped").tooltip();
   $('select').formSelect();
   updateCommands(false);
-  setTimeout(function() {
-    $("#loader").css("display", "none");
-    $("#content").fadeIn();
-  }, 0);
 });
 function updateCommands(doLog = true) {
   $("#updateCommands").prop("disabled", true);

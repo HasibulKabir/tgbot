@@ -1,27 +1,3 @@
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-#loader {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  margin: auto;
-  border-width: 19px;
-  border-style: solid;
-  border-radius: 50%;
-  border-color: transparent transparent #1e88e5 #1e88e5;
-  animation: spin .7s ease-in-out infinite;
-  width: 87px;
-  height: 87px;
-}
-
 .botSettings * {
   display: inline-block;
 }
