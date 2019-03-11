@@ -158,7 +158,6 @@ function updateCommands(doLog = true) {
   for(var command in c) {
     if(c[command].charAt(0) === "\n") c[command] = c[command].substr(1);
     var commandArr = c[command].splitTwo(" > ");
-    console.log(c);
     if(commandArr[0] in commands)
       commands[commandArr[0]].push(commandArr[1]);
     else
