@@ -156,8 +156,12 @@ function updateCommands(doLog = true) {
   var c = commandsString.split(/;$/gm);
   for(var command in c) {
     if(c[command].charAt(0) === "\n") c[command] = c[command].substr(1);
-    var commandArr = c[command].split(" > ");
-    commands[commandArr[0]] = commandArr[1];
+    var commandArr = c[command].splitTwo(" > ");
+    console.log(c);
+    if(commandArr[0] in commands)
+      commands[commandArr[0]].push(commandArr[1]);
+    else
+      commands[commandArr[0]] = [commandArr[1]];
   }
   localStorage.setItem("commands", $("#commands").val().replace(/\n/g, "///////////"));
   if(doLog) log("Aggiornamento lista comandi completato!", "[INFO]", "green-text");
@@ -258,7 +262,8 @@ function analyzeUpdate(update) {
     sendMessage(chat_id, "FileID: <code>" + maxPhotoSize + "</code>", false, "HTML");
   }
   if(text in commands && commands[text]) {
-    sendMessage(chat_id, commands[text]);
+    for(var ind in commands[text])
+      sendMessage(chat_id, commands[text][ind]);
   }
 }
 function sendMessage(chat_id, messageText, doLog = false, parse_mode = false) {
