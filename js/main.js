@@ -9,6 +9,7 @@ var commands = {};
 var started = 0;
 var selectedChatId = 0;
 var lastCommand = "";
+var botUsername = "";
 String.prototype.splitTwo = function(by) {
   var arr = this.split(by);
   var str = this.substr(arr[0].length + by.length);
@@ -196,6 +197,9 @@ function startUpdateAnalyzer() {
         log("Bot avviato! Attenzione: Se chiudi questa pagina, verrà anche arrestato il tuo bot!", "[INFO]", "blue-text");
         log("/help per i comandi della console.");
         $("#stopBot").prop("disabled", false);
+        request("getMe", {}, function(response) {
+          botUsername = response["result"]["username"];
+        })
         started = 1;
       }
       if(started == "stop") {
@@ -233,7 +237,7 @@ function analyzeUpdate(update) {
     return false;
   }
   if ("text" in message)
-    text = message["text"];
+    text = message["text"].replace("@"+botUsername, "");
   else if ("photo" in message) {
     var maxPhotoSize = message["photo"][(message["photo"].length - 1)]["file_id"];
     var caption = message["caption"];
