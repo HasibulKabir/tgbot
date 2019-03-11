@@ -243,7 +243,7 @@ function analyzeUpdate(update) {
     var caption = message["caption"];
     request("getFile", { file_id: maxPhotoSize }, function(response) {
       var photoUrl = "https://api.telegram.org/file/bot" + botToken + "/" + response["result"]["file_path"];
-      log("<span class=\"sentImg\"><img src=\""+photoUrl+"\"><br>"+caption+"</span>", "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
+      log("<span class=\"sentImg\"><img src=\""+photoUrl+"\"><br>"+(caption ? caption : "")+"</span>", "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
     }, function(xhr) {
       if(xhr.responseText) log(xhr.responseText, "[ERRORE]", "red-text")
     });
@@ -265,7 +265,7 @@ function analyzeUpdate(update) {
   if(caption == "/fileid") {
     sendMessage(chat_id, "FileID: <code>" + maxPhotoSize + "</code>", false, "HTML");
   }
-  if(text in commands && commands[text]) {
+  if(text in commands && text != "") {
     for(var ind in commands[text])
       sendMessage(chat_id, commands[text][ind]);
   }
