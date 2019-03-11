@@ -9,6 +9,11 @@ var commands = {};
 var started = 0;
 var selectedChatId = 0;
 var lastCommand = "";
+String.prototype.splitTwo = function(by) {
+  var arr = this.split(by);
+  var str = this.substr(arr[0].length + by.length);
+  return [arr[0], str];
+}
 function log(text, prefix = "[INFO]", classes = "white-text") {
   var consoleElem = $("#console");
   consoleElem.html(consoleElem.html() + "<span class=\""+classes+"\">" + prefix + " " + text + "</span><br />");
@@ -211,7 +216,7 @@ function updateBotSettings() {
 function analyzeUpdate(update) {
   var text = "";
   var message;
-  var chat_id = 0
+  var chat_id = 0;
   var name = "";
   if ("message" in update)
     message = update["message"];
@@ -225,8 +230,17 @@ function analyzeUpdate(update) {
   }
   if ("text" in message)
     text = message["text"];
-  else
-    text = "Messaggio non supportato.";
+  else if ("photo" in message) {
+    var maxPhotoSize = message["photo"][(message["photo"].length - 1)]["file_id"];
+    var caption = message["caption"];
+    request("getFile", { file_id: maxPhotoSize }, function(response) {
+      var photoUrl = "https://api.telegram.org/file/bot" + botToken + "/" + response["result"]["file_path"];
+      log("<span class=\"sentImg\"><img src=\""+photoUrl+"\"><br>"+caption+"</span>", "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
+    }, function(xhr) {
+      if(xhr.responseText) log(xhr.responseText, "[ERRORE]", "red-text")
+    });
+    text = "";
+  }
   if("from" in message) {
     if ("first_name" in message["from"])
       name = message["from"]["first_name"];
@@ -234,39 +248,66 @@ function analyzeUpdate(update) {
       name += message["from"]["last_name"];
   }
   if(selectedChatId == chat_id || $("#logAllMsg").prop("checked")) {
-    log(text, "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"))
+    if(text)
+      log(text, "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
   }
   if(text == "/chatid") {
-    sendMessage(chat_id, "ID del gruppo: <code>"+chat_id+"</code>", false, "HTML");
+    sendMessage(chat_id, "ID della chat: <code>"+chat_id+"</code>", false, "HTML");
   }
-  if(text in commands) {
+  if(caption == "/fileid") {
+    sendMessage(chat_id, "FileID: <code>" + maxPhotoSize + "</code>", false, "HTML");
+  }
+  if(text in commands && commands[text]) {
     sendMessage(chat_id, commands[text]);
   }
 }
 function sendMessage(chat_id, messageText, doLog = false, parse_mode = false) {
   if(!parse_mode) parse_mode = $("#parseMode").val();
-  if((chat_id == undefined || chat_id == "") && !chat_id) {
-    return false;
+  if(messageText.indexOf("photo") == 0) {
+    var file_id = messageText.splitTwo(" ")[1];
+    var args = {
+      chat_id: chat_id,
+      photo: file_id
+    };
+    request("sendPhoto", args, function(response) {
+      if(doLog) request("getFile", { file_id: file_id }, function(response) {
+            var photoUrl = "https://api.telegram.org/file/bot" + botToken + "/" + response["result"]["file_path"];
+            log("<span class=\"sentImg\"><img src=\""+photoUrl+"\"></span>", "[Messaggio inviato: "+chat_id+"]", "green-text");
+          }, function(xhr) {
+            if(xhr.responseText) log(xhr.responseText, "[ERRORE]", "red-text")
+          });
+    }, function(xhr) {
+      var response = xhr.responseText;
+      log("Errore nell'invio del messaggio: "+response, "[ERRORE]", "red-text");
+    }, true);
   } else {
-    $.ajax({
-      url: "https://api.telegram.org/bot" + botToken + "/sendMessage",
-      async: true,
-      method: "POST",
-      data: {
+    if((chat_id == undefined || chat_id == "") && !chat_id) {
+      return false;
+    } else {
+      var args = {
         chat_id: chat_id,
         text: messageText,
         parse_mode: parse_mode,
         disable_web_page_preview: $("wpPreview").val()
-      },
-      dataType: "json",
-      success: function(response) {
+      };
+      request("sendMessage", args, function(response) {
         if(doLog) log(response.result.text, "[Messaggio inviato: "+chat_id+"]", "green-text");
-      },
-      error: function(xhr) {
+      }, function(xhr) {
         var response = xhr.responseText;
         log("Errore nell'invio del messaggio: "+response, "[ERRORE]", "red-text");
-      },
-    });
-    return true;
+      }, true);
+      return true;
+    }
   }
+}
+function request(method, args = {}, successCb = function() {}, errorCb = function() {}, async = true) {
+  $.ajax({
+    url: "https://api.telegram.org/bot" + botToken + "/"+method,
+    async: async,
+    method: "POST",
+    data: args,
+    dataType: "json",
+    success: successCb,
+    error: errorCb
+  });
 }
