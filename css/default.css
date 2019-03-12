@@ -41,6 +41,9 @@
   height: 84%;
   background-color: inherit;
   overflow-y: scroll;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 #consoleCommandsContainer {
   display: block;

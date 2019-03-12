@@ -10,6 +10,7 @@ var started = 0;
 var selectedChatId = 0;
 var lastCommand = "";
 var botUsername = "";
+var knownChatIDs = {};
 String.prototype.splitTwo = function(by) {
   var arr = this.split(by);
   var str = this.substr(arr[0].length + by.length);
@@ -21,6 +22,9 @@ function log(text, prefix = "[INFO]", classes = "white-text") {
   consoleElem.scrollTop(consoleElem[0].scrollHeight - consoleElem.height());
 }
 $(document).ready(function() {
+  $("#applyChatId").on("click", function() {
+    sendCommand("/select "+$("#selectChatId").val());
+  });
   $("#autoStart").on("change", updateBotSettings);
   $("#logAllMsg").on("change", updateBotSettings);
   $("#parseMode").on("change", updateBotSettings);
@@ -30,45 +34,7 @@ $(document).ready(function() {
     var commandI = $("#consoleCommands");
     var command = commandI.val().replace(/\\n/g, "\n")
     lastCommand = commandI.val();
-    if(botToken != "" && botToken && started == 1)
-      switch(commandI.val().split(" ",1)[0]) {
-        case "/help":
-          log("Menù comandi:<br />/help: visualizza questo menù di aiuto<br />/select &lt;chat_id&gt;: seleziona chat in cui inviare i messaggi<br />&lt;messaggio&gt;: invia messaggio nella chat_id selezionata", "");
-          break;
-        case "/select":
-          var cId = commandI.val().split(" ");
-          if (1 in cId) {
-            selectedChatId = cId[1];
-            log("Selezionato "+selectedChatId+"!", "[INFO]", "green-text");
-            updateBotSettings();
-          } else {
-            if(selectedChatId) {
-              selectedChatId = 0;
-              log("Rimossa selezione chat_id.");
-              updateBotSettings();
-            } else
-              log("Metti la chat_id dopo /select, se non conosci il chat_id, dai al bot /chatid", "[ERRORE]", "red-text");
-          }
-          break;
-        default:
-          if(commandI.val().charAt(0) == "/")
-            log("Comando non valido. /help per una lista completa di comandi.", "[ERRORE]", "red-text");
-          else {
-            if (selectedChatId != 0) {
-              if(command.replace(new RegExp(" ", "g"), "").length > 0)
-                if(command.length <= 4096)
-                  sendMessage(selectedChatId, command, true);
-                else
-                  log("Messaggio troppo lungo. Caratteri massimi consentiti: 4096 caratteri.", "[ERRORE]", "red-text");
-              else
-                log("Messaggio nullo.", "[ERRORE]", "red-text");
-            } else
-              log("Per favore, prima di tentare di inviare un messaggio, usa /select", "[ERRORE]", "red-text");
-          }
-          break;
-      } else {
-        log("Prima di scrivere comandi, perfavore, metti il token del bot. Se lo hai già fatto, assicurati di aver avviato il bot cliccando il pulsante \"Avvia\"", "[ERRORE]", "red-text");
-      }
+    sendCommand(commandI.val());
     commandI.val("");
   });
   $("#consoleCommands").focus(function() {
@@ -128,17 +94,19 @@ $(document).ready(function() {
             $("#autoStart").prop("checked", false);
             updateBotSettings();
           }
-        }, 0);
+        }, 500);
       }
     }
     if ("selectedChatId" in bSettings && bSettings["selectedChatId"] != 0) {
       setTimeout(function() {
         selectedChatId = bSettings["selectedChatId"];
         log("Selezionata chat_id "+selectedChatId+" come da sessione precedente.", "[INFO]", "yellow-text");
-      }, 0);
+      }, 500);
     }
     if ("logAllMsg" in bSettings)
       $("#logAllMsg").prop("checked", bSettings["logAllMsg"]);
+    if ("knownChatIDs" in bSettings)
+      knownChatIDs = JSON.parse(bSettings["knownChatIDs"]);
     if ("ufUpdAnalyzer" in bSettings)
       $("#ufUpdAnalyzer").prop("checked", bSettings["ufUpdAnalyzer"]);
   }
@@ -221,6 +189,7 @@ function updateBotSettings() {
       logAllMsg: $("#logAllMsg").prop("checked"),
       ufUpdAnalyzer: $("#ufUpdAnalyzer").prop("checked"),
       selectedChatId: selectedChatId,
+      knownChatIDs: JSON.stringify(knownChatIDs),
     }));
 }
 function analyzeUpdate(update) {
@@ -250,17 +219,20 @@ function analyzeUpdate(update) {
       if(xhr.responseText) log(xhr.responseText, "[ERRORE]", "red-text")
     });
     text = "";
+  } else {
+    log("Messaggio non supportato", "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
   }
   if("from" in message) {
     if ("first_name" in message["from"])
       name = message["from"]["first_name"];
     if("last_name" in message["from"])
-      name += message["from"]["last_name"];
+      name += " "+message["from"]["last_name"];
   }
   if(selectedChatId == chat_id || $("#logAllMsg").prop("checked")) {
     if(text)
       log(text, "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
   }
+  knownChatIDs[chat_id] = name;
   if(text == "/chatid") {
     sendMessage(chat_id, "ID della chat: <code>"+chat_id+"</code>", false, "HTML");
   }
@@ -322,3 +294,49 @@ function request(method, args = {}, successCb = function() {}, errorCb = functio
     error: errorCb
   });
 }
+function sendCommand(command) {
+  if(botToken != "" && botToken && started == 1)
+    switch(command.splitTwo(" ",1)[0]) {
+      case "/help":
+        log("Menù comandi:<br />/help: visualizza questo menù di aiuto<br />/select &lt;chat_id&gt;: seleziona chat in cui inviare i messaggi<br />&lt;messaggio&gt;: invia messaggio nella chat_id selezionata", "");
+        break;
+      case "/select":
+        var cId = command.splitTwo(" ");
+        if (1 in cId && cId[1]) {
+          selectedChatId = cId[1];
+          log("Selezionato "+selectedChatId+"!", "[INFO]", "green-text");
+          updateBotSettings();
+        } else {
+          if($.isEmptyObject(knownChatIDs))
+            log("Nessun chat_id conosciuto. Impossibile mostrare la GUI. Seleziona un chat_id manualmente con /select &lt;chat_id&gt;", "[ERRORE]", "red-text");
+          else {
+            var opts = "";
+            for(var chatId in knownChatIDs) {
+              opts += "<option value=\""+chatId+"\""+((chatId == selectedChatId) ? " selected" : "")+">"+knownChatIDs[chatId]+"</option>";
+            }
+            $("#selectChatId").html(opts).formSelect();
+            $("#selectChatIdModal").modal("open");
+          }
+        }
+        break;
+      default:
+        if(command.charAt(0) == "/")
+          log("Comando non valido. /help per una lista completa di comandi.", "[ERRORE]", "red-text");
+        else {
+          if (selectedChatId != 0) {
+            command = command.replace(/\\n/g, "\n")
+            if(command.replace(new RegExp(" ", "g"), "").length > 0)
+              if(command.length <= 4096)
+                sendMessage(selectedChatId, command, true);
+              else
+                log("Messaggio troppo lungo. Caratteri massimi consentiti: 4096 caratteri.", "[ERRORE]", "red-text");
+            else
+              log("Messaggio nullo.", "[ERRORE]", "red-text");
+          } else
+            log("Per favore, prima di tentare di inviare un messaggio, usa /select", "[ERRORE]", "red-text");
+        }
+        break;
+      }
+    else
+      log("Prima di scrivere comandi, perfavore, metti il token del bot. Se lo hai già fatto, assicurati di aver avviato il bot cliccando il pulsante \"Avvia\"", "[ERRORE]", "red-text");
+  }
