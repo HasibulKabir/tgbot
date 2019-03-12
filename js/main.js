@@ -221,9 +221,12 @@ function analyzeUpdate(update) {
     log("Messaggio non supportato", "[WARNING]", "yellow-text");
     return false;
   }
-  if ("text" in message)
+  if ("text" in message) {
     if(message["text"].indexOf(0) == "/")
       text = message["text"].replace("@"+botUsername, "");
+    else
+      text = message["text"];
+  }
   else if ("photo" in message) {
     var maxPhotoSize = message["photo"][(message["photo"].length - 1)]["file_id"];
     var caption = message["caption"];
@@ -236,7 +239,6 @@ function analyzeUpdate(update) {
     text = "";
   } else {
     text = "Messaggio non supportato!";
-    log("Messaggio non supportato", "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
   }
   if("from" in message) {
     if ("first_name" in message["from"])
