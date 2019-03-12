@@ -6,8 +6,8 @@
     <!-- Tags for search engines -->
     <meta name="author" content="ItzPatoo">
     <meta name="og:title" content="Easy Telegram bot in JS">
-    <meta name="og:description" content="Con questo sito puoi creare facilmente un bot telegram con il semplicissimo utilizzo del tuo browser! Presente anche la console per inviare messaggi e riceverli!">
-    <meta name="description" content="Con questo sito puoi creare facilmente un bot telegram con il semplicissimo utilizzo del tuo browser! Presente anche la console per inviare messaggi e riceverli!">
+    <meta name="og:description" content="Con questo sito puoi creare facilmente un bot telegram con il semplicissimo utilizzo del tuo browser! codesente anche la console per inviare messaggi e riceverli!">
+    <meta name="description" content="Con questo sito puoi creare facilmente un bot telegram con il semplicissimo utilizzo del tuo browser! codesente anche la console per inviare messaggi e riceverli!">
     <meta name="application-name" content="Easy Telegram bot in JS">
     <meta name="keywords" content="TelegramBotJS JSTelegramBot TelegramBot Telegram Bot Javascript">
     <meta name="msvalidate.01" content="ADB52CE29F47DB2CAC8C8CA03E19D6F2" />
@@ -26,10 +26,10 @@
     <!-- End -->
 
     <title>Telegram JS Easy Bot</title>
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" as="style">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="preload" as="style">
-    <link rel="preload" href="css/default.css" as="style">
-    <link rel="preload" href="../css/default.css" as="style">
+    <link rel="codeload" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" as="style">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="codeload" as="style">
+    <link rel="codeload" href="css/default.css" as="style">
+    <link rel="codeload" href="../css/default.css" as="style">
     <link rel="icon" href="icons/logo-128.png" sizes="128x128" type="image/png">
     <link rel="icon" href="icons/logo-64.png" sizes="64x64" type="image/png">
     <link rel="icon" href="icons/logo-32.png" sizes="32x32" type="image/png">
@@ -76,11 +76,11 @@
               <label for="parseMode">Parse Mode</label>
             </div>
             <div class="input-field col s6">
-              <select id="wpPreview">
+              <select id="wpcodeview">
                 <option value="false" selected>No</option>
                 <option value="true">Yes</option>
               </select>
-              <label for="wpPreview">Disable Web Page Preview</label>
+              <label for="wpcodeview">Disable Web Page codeview</label>
             </div>
           </div>
           <div class="row">
@@ -157,21 +157,30 @@
       <li class="active"><a class="waves-effect" href="/tg-js-bot"><i class="material-icons left">sms</i>Easy Telegram Bot</a></li>
       <li><a class="waves-effect" href="/PatoBot"><i class="material-icons left">code</i>PatoBot</a></li>
     </ul>
-    <div class="modal" id="helpCommands">
+    <div class="modal modal-fixed-footer" id="helpCommands">
       <div class="modal-content">
         <h4>Help comandi</h4>
         <p>
           /comando > Risposta<strong>;</strong><br>
           Nella risposta, puoi usare <strong>photo file_id/url</strong> per inviare una foto, o un semplice testo per inviare una risposta testuale.<br>
           Saranno aggiunti altri tipi di documenti/video presto.<br>
-          Per ricevere il file_id di una foto, manda una foto al tuo bot con descrizione /fileid
+          Per ricevere il file_id di una foto, manda una foto al tuo bot con descrizione /fileid<br>
+          Nella risposta testuale puoi usare i seguenti codici:<br>
+          <code>{CHATID}</code>, <code>{USERID}</code>, <code>{CHATTITLE}</code>, <code>{NAME}</code>, <code>{FIRSTNAME}</code>, <code>{LASTNAME}</code>, <code>{MSGTEXT}</code><br>
+          <code>{CHATID}</code>: ID della chat<br>
+          <code>{USERID}</code>: ID utente<br>
+          <code>{CHATTITLE}</code>: Nel caso di un gruppo, il nome del gruppo, altrimenti il nome completo dell'utente<br>
+          <code>{NAME}</code>: Nome completo dell'utente<br>
+          <code>{FIRSTNAME}</code>: Nome dell'utente<br>
+          <code>{LASTNAME}</code>: Cognome dell'utente<br>
+          <code>{MSGTEXT}</code>: Testo messaggio inviato.
         </p>
       </div>
       <div class="modal-footer">
         <a href="#!" class="modal-close waves-effect waves-light btn-flat">OK</a>
       </div>
     </div>
-    <div class="modal" id="selectChatIdModal">
+    <div class="modal modal-fixed-footer" id="selectChatIdModal">
       <div class="modal-content">
         <h4>Seleziona la chat_id</h4>
         <div class="input-fiels col s12">
@@ -180,8 +189,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <a href="#!" id="removeChatId" class="modal-close waves-effect waves-light btn-flat">Rimuovi selezione</a>
-        <a href="#!" id="applyChatId" class="modal-close waves-effect waves-light btn-flat">OK</a>
+        <a href="#!" id="removeChatId" class="modal-close waves-effect waves-red btn-flat">Rimuovi selezione</a>
+        <a href="#!" id="applyChatId" class="modal-close waves-effect waves-green btn-flat">OK</a>
       </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>

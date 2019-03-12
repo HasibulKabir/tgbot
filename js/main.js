@@ -16,6 +16,15 @@ String.prototype.splitTwo = function(by) {
   var str = this.substr(arr[0].length + by.length);
   return [arr[0], str];
 }
+String.prototype.replaceArray = function(find, replace) {
+  var replaceString = this;
+  var regex;
+  for (var i = 0; i < find.length; i++) {
+    regex = new RegExp(find[i], "g");
+    replaceString = replaceString.replace(regex, replace[i]);
+  }
+  return replaceString;
+};
 function log(text, prefix = "[INFO]", classes = "white-text") {
   var consoleElem = $("#console");
   consoleElem.html(consoleElem.html() + "<span class=\""+classes+"\">" + prefix + " " + text + "</span><br />");
@@ -58,7 +67,7 @@ $(document).ready(function() {
     if(botToken != "" && botToken) {
       $("#startBot").prop("disabled", true);
       log("Avviando il bot... Connessione in corso ai server telegram...", "[INFO]", "blue-text");
-      setTimeout(startUpdateAnalyzer, 0);
+      setTimeout(updateAnalyzer, 0);
     } else {
       log("Bot non avviato! Bot token vuoto!", "[ERRORE]", "red-text");
     }
@@ -141,7 +150,7 @@ function updateCommands(doLog = true) {
   if(doLog) log("Aggiornamento lista comandi completato!", "[INFO]", "green-text");
   $("#updateCommands").prop("disabled", false);
 }
-function startUpdateAnalyzer() {
+function updateAnalyzer() {
   request("getUpdates",{
       offset: updateOffset
     }, function(response) {
@@ -150,7 +159,7 @@ function startUpdateAnalyzer() {
         $("#startBot").prop("disabled", false);
         log("Bot arrestato!", "[INFO]", "blue-text");
         started = 0;
-      } else setTimeout(startUpdateAnalyzer, ($("#ufUpdAnalyzer").prop("checked")) ? 0 : 500);
+      } else setTimeout(updateAnalyzer, ($("#ufUpdAnalyzer").prop("checked")) ? 0 : 500);
       if(response["result"] !== [] && response["result"] && response["result"].length > 0) {
         update = response["result"][0];
         updateOffset = update["update_id"];
@@ -196,14 +205,18 @@ function analyzeUpdate(update) {
   var name = "";
   var chat_name;
   var chat_title;
+  var is_group = false;
+  var last_name;
   if ("message" in update)
     message = update["message"];
   else
     message = {};
   if ("chat" in message) {
     chat_id = message["chat"]["id"];
-    if("title" in message["chat"])
+    if("title" in message["chat"]) {
       chat_title = message["chat"]["title"];
+      is_group = true;
+    }
   } else {
     log("Messaggio non supportato", "[WARNING]", "yellow-text");
     return false;
@@ -221,32 +234,49 @@ function analyzeUpdate(update) {
     });
     text = "";
   } else {
+    text = "Messaggio non supportato!";
     log("Messaggio non supportato", "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
   }
   if("from" in message) {
     if ("first_name" in message["from"])
       name = message["from"]["first_name"];
-    if("last_name" in message["from"])
-      name += " "+message["from"]["last_name"];
+    if("last_name" in message["from"]){
+      last_name = message["from"]["last_name"];
+      name += " "+last_name;
+    } else last_name = "";
   }
   if(typeof chat_title !== "undefined") {
-    name = chat_title + ": " + name;
     chat_name = chat_title;
   } else chat_name = name;
   if(selectedChatId == chat_id || $("#logAllMsg").prop("checked")) {
     if(text)
-      log(text, "["+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
+      log(text, "["+(is_group ? (chat_title + ": ") : "")+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
   }
   knownChatIDs[chat_id] = chat_name;
-  if(text == "/chatid") {
-    sendMessage(chat_id, "ID della chat: <code>"+chat_id+"</code>", false, "HTML");
-  }
+  var find = [
+    "{CHATID}",
+    "{USERID}",
+    "{CHATTITLE}",
+    "{NAME}",
+    "{FIRSTNAME}",
+    "{LASTNAME}",
+    "{MSGTEXT}"
+  ];
+  var replace = [
+    message["chat"]["id"],
+    message["from"]["id"],
+    chat_name,
+    name,
+    message["from"]["first_name"],
+    last_name,
+    text
+  ];
   if(caption == "/fileid") {
     sendMessage(chat_id, "FileID: <code>" + maxPhotoSize + "</code>", false, "HTML");
   }
   if(text in commands && text != "") {
     for(var ind in commands[text])
-      sendMessage(chat_id, commands[text][ind]);
+      sendMessage(chat_id, commands[text][ind].replaceArray(find, replace));
   }
 }
 function sendMessage(chat_id, messageText, doLog = false, parse_mode = false) {
