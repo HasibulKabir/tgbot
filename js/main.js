@@ -259,7 +259,7 @@ function analyzeUpdate(update) {
   } else chat_name = name;
   if(selectedChatId == chat_id || $("#logAllMsg").prop("checked")) {
     if(text)
-      log(text, "["+(is_group ? (chat_title + ": ") : "")+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
+      log($("<div>").text(text).html(), "["+(is_group ? (chat_title + ": ") : "")+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
   }
   knownChatIDs[chat_id] = chat_name;
   var find = [
@@ -278,7 +278,7 @@ function analyzeUpdate(update) {
     $("<div>").text(name).html(),
     $("<div>").text(message["from"]["first_name"]).html(),
     $("<div>").text(last_name).html(),
-    $("<div>").text(text).html()
+    text
   ];
   if(caption == "/fileid") {
     sendMessage(chat_id, "FileID: <code>" + maxPhotoSize + "</code>", false, "HTML");
