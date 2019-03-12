@@ -192,6 +192,7 @@ function analyzeUpdate(update) {
   var message;
   var chat_id = 0;
   var name = "";
+  var chat_name;
   if ("message" in update)
     message = update["message"];
   else
@@ -225,7 +226,7 @@ function analyzeUpdate(update) {
     if("last_name" in message["from"])
       name += " "+message["from"]["last_name"];
   }
-  if(chat_title) {
+  if(typeof chat_title !== "undefined") {
     name = chat_title + ": " + name;
     chat_name = chat_title;
   } else chat_name = name;
