@@ -146,10 +146,17 @@ function startUpdateAnalyzer() {
       offset: updateOffset
     }, function(response) {
       var update = {};
+      if(started == "stop") {
+        $("#startBot").prop("disabled", false);
+        log("Bot arrestato!", "[INFO]", "blue-text");
+        started = 0;
+      } else setTimeout(startUpdateAnalyzer, ($("#ufUpdAnalyzer").prop("checked")) ? 0 : 500);
       if(response["result"] !== [] && response["result"] && response["result"].length > 0) {
         update = response["result"][0];
         updateOffset = update["update_id"];
-        analyzeUpdate(update);
+        setTimeout(function() {
+          analyzeUpdate(update);
+        }, 0);
         updateOffset++;
       }
       if(started == 0) {
@@ -162,11 +169,6 @@ function startUpdateAnalyzer() {
         });
         started = 1;
       }
-      if(started == "stop") {
-        $("#startBot").prop("disabled", false);
-        log("Bot arrestato!", "[INFO]", "blue-text");
-        started = 0;
-      } else setTimeout(startUpdateAnalyzer, ($("#ufUpdAnalyzer").prop("checked")) ? 0 : 500);
     }, function(xhr) {
     var response = xhr.responseText;
     log("Errore nella connessione: "+response+"<br />Possibile token errato.", "[ERRORE]", "red-text");
