@@ -222,7 +222,8 @@ function analyzeUpdate(update) {
     return false;
   }
   if ("text" in message)
-    text = message["text"].replace("@"+botUsername, "");
+    if(message["text"].indexOf(0) == "/")
+      text = message["text"].replace("@"+botUsername, "");
   else if ("photo" in message) {
     var maxPhotoSize = message["photo"][(message["photo"].length - 1)]["file_id"];
     var caption = message["caption"];
@@ -275,8 +276,14 @@ function analyzeUpdate(update) {
     sendMessage(chat_id, "FileID: <code>" + maxPhotoSize + "</code>", false, "HTML");
   }
   if(text in commands && text != "") {
-    for(var ind in commands[text])
+    for(var ind in commands[text]) {
       sendMessage(chat_id, commands[text][ind].replaceArray(find, replace));
+    }
+  }
+  if ("any" in commands) {
+    for(var ind in commands["any"]) {
+      sendMessage(chat_id, commands["any"][ind].replaceArray(find, replace));
+    }
   }
 }
 function sendMessage(chat_id, messageText, doLog = false, parse_mode = false) {
