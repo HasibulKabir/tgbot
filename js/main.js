@@ -120,27 +120,31 @@ $(document).ready(function() {
       if ("autoStart" in bSettings) {
         $("#autoStart").prop("checked", bSettings["autoStart"]);
         if(bSettings["autoStart"] == true) {
-          log("Bot in avvio secondo le tue impostazioni...", "[INFO]", "yellow-text");
-          if (botToken != "" && botToken) {
-            $("#startBot").click();
-          } else {
-            log("Bot token vuoto.", "[ERRORE]", "red-text");
-            $("#autoStart").prop("checked", false);
-            updateBotSettings();
-          }
+          setTimeout(function() {
+            log("Bot in avvio secondo le tue impostazioni...", "[INFO]", "yellow-text");
+            if (botToken != "" && botToken) {
+              $("#startBot").click();
+            } else {
+              log("Bot token vuoto.", "[ERRORE]", "red-text");
+              $("#autoStart").prop("checked", false);
+              updateBotSettings();
+            }
+          }, 0);
         }
       }
       if ("selectedChatId" in bSettings && bSettings["selectedChatId"] != 0) {
-        selectedChatId = bSettings["selectedChatId"];
-        log("Selezionata chat_id "+selectedChatId+" come da sessione precedente.", "[INFO]", "yellow-text");
+        setTimeout(function() {
+          selectedChatId = bSettings["selectedChatId"];
+          log("Selezionata chat_id "+selectedChatId+" come da sessione precedente.", "[INFO]", "yellow-text");
+        }, 0;
       }
       if ("logAllMsg" in bSettings)
         $("#logAllMsg").prop("checked", bSettings["logAllMsg"]);
       if ("ufUpdAnalyzer" in bSettings)
         $("#ufUpdAnalyzer").prop("checked", bSettings["ufUpdAnalyzer"]);
     }
-    M.textareaAutoResize($('#commands'));
     M.updateTextFields();
+    M.textareaAutoResize($('#commands'));
     $("#console").html("");
     $(".tooltipped").tooltip();
     $('select').formSelect();
