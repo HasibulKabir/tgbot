@@ -12,6 +12,8 @@ var lastCommand = "";
 var botUsername = "";
 var knownChatIDs = {};
 var botInfo;
+var debug = false;
+
 String.prototype.splitTwo = function(by) {
   var arr = this.split(by);
   var str = this.substr(arr[0].length + by.length);
@@ -32,6 +34,13 @@ function log(text, prefix = "[INFO]", classes = "white-text") {
   consoleElem.scrollTop(consoleElem[0].scrollHeight - consoleElem.height());
 }
 $(document).ready(function() {
+  if (location.href.indexOf("#") != -1) {
+    var hash = location.href.substr(location.href.indexOf("#")+1);
+    if(hash == "debug=1") {
+      debug = true;
+      setTimeout(function(){log("DEBUG mode enabled", "[DEBUG]")}, 0);
+    }
+  }
   $("#applyChatId").on("click", function() {
     sendCommand("/select "+$("#selectChatId").val());
   });
@@ -107,14 +116,14 @@ $(document).ready(function() {
             $("#autoStart").prop("checked", false);
             updateBotSettings();
           }
-        }, 500);
+        }, 0);
       }
     }
     if ("selectedChatId" in bSettings && bSettings["selectedChatId"] != 0) {
       setTimeout(function() {
         selectedChatId = bSettings["selectedChatId"];
         log("Selezionata chat_id "+selectedChatId+" come da sessione precedente.", "[INFO]", "yellow-text");
-      }, 500);
+      }, 0);
     }
     if ("logAllMsg" in bSettings)
       $("#logAllMsg").prop("checked", bSettings["logAllMsg"]);
@@ -126,7 +135,6 @@ $(document).ready(function() {
   setTimeout(function() {
     M.updateTextFields();
     M.textareaAutoResize($('#commands'));
-    $("#console").html("");
     $(".tooltipped").tooltip();
     $('select').formSelect();
     $(".modal").modal();
@@ -169,6 +177,7 @@ function updateAnalyzer() {
           analyzeUpdate(update);
         }, 0);
         updateOffset++;
+        if(debug) log("Received update "+JSON.stringify(response), "[DEBUG]");
       }
       if(started == 0) {
         localStorage.setItem("botToken", $("#token").val());
@@ -203,6 +212,7 @@ function updateBotSettings() {
       selectedChatId: selectedChatId,
       knownChatIDs: JSON.stringify(knownChatIDs),
     }));
+    if(debug) log("Updated bot settings", "[DEBUG]");
 }
 function analyzeUpdate(update) {
   var text = "";
@@ -213,6 +223,7 @@ function analyzeUpdate(update) {
   var chat_title;
   var is_group = false;
   var last_name;
+  log("Analysing update: "+JSON.stringify(update), "[DEBUG]");
   if ("message" in update)
     message = update["message"];
   else
@@ -269,7 +280,8 @@ function analyzeUpdate(update) {
     "{NAME}",
     "{FIRSTNAME}",
     "{LASTNAME}",
-    "{MSGTEXT}"
+    "{MSGTEXT}",
+    "{HTMLESCAPEDMSGTEXT}"
   ];
   var replace = [
     message["chat"]["id"],
@@ -278,19 +290,24 @@ function analyzeUpdate(update) {
     $("<div>").text(name).html(),
     $("<div>").text(message["from"]["first_name"]).html(),
     $("<div>").text(last_name).html(),
-    text
+    text,
+    $("<div>").text(text).html()
   ];
   if(caption == "/fileid") {
     sendMessage(chat_id, "FileID: <code>" + maxPhotoSize + "</code>", false, "HTML");
   }
   if(text in commands && text != "") {
     for(var ind in commands[text]) {
-      sendMessage(chat_id, commands[text][ind].replaceArray(find, replace));
+      var send_text = commands[text][ind].replaceArray(find, replace);
+      if(debug) log("Text to send: "+$("<div>").text(send_text).html(), "[DEBUG]");
+      sendMessage(chat_id, send_text);
     }
   }
   if ("any" in commands) {
     for(var ind in commands["any"]) {
-      sendMessage(chat_id, commands["any"][ind].replaceArray(find, replace));
+      var send_text = commands["any"][ind].replaceArray(find, replace);
+      if(debug) log("Text to send: "+$("<div>").text(send_text).html(), "[DEBUG]");
+      sendMessage(chat_id, send_text);
     }
   }
 }
