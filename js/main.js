@@ -103,23 +103,23 @@ $(document).ready(function() {
     updateCommands(true);
   });
   $("#updateCommands").click(updateCommands);
-  if("commands" in cookies) {
-    $("#commands").val(cookies["commands"].split("///////////").join("\n"));
-  } else $("#commands").val("/start > Messaggio di avvio!;\n/help > Menù di aiuto!;");
-  if("botToken" in cookies) {
-    $("#token").val(cookies["botToken"]);
-    botToken = $("#token").val();
-  }
-  if("botSettings" in cookies) {
-    var bSettings = JSON.parse(cookies["botSettings"]);
-    if ("parseMode" in bSettings)
-      $("#parseMode").val(bSettings["parseMode"]);
-    if ("wpPreview" in bSettings)
-      $("#wpPreview").val(bSettings["wpPreview"]);
-    if ("autoStart" in bSettings) {
-      $("#autoStart").prop("checked", bSettings["autoStart"]);
-      if(bSettings["autoStart"] == true) {
-        setTimeout(function() {
+  setTimeout(function() {
+    if("commands" in cookies) {
+      $("#commands").val(cookies["commands"].split("///////////").join("\n"));
+    } else $("#commands").val("/start > Messaggio di avvio!;\n/help > Menù di aiuto!;");
+    if("botToken" in cookies) {
+      $("#token").val(cookies["botToken"]);
+      botToken = $("#token").val();
+    }
+    if("botSettings" in cookies) {
+      var bSettings = JSON.parse(cookies["botSettings"]);
+      if ("parseMode" in bSettings)
+        $("#parseMode").val(bSettings["parseMode"]);
+      if ("wpPreview" in bSettings)
+        $("#wpPreview").val(bSettings["wpPreview"]);
+      if ("autoStart" in bSettings) {
+        $("#autoStart").prop("checked", bSettings["autoStart"]);
+        if(bSettings["autoStart"] == true) {
           log("Bot in avvio secondo le tue impostazioni...", "[INFO]", "yellow-text");
           if (botToken != "" && botToken) {
             $("#startBot").click();
@@ -128,25 +128,24 @@ $(document).ready(function() {
             $("#autoStart").prop("checked", false);
             updateBotSettings();
           }
-        }, 0);
+        }
       }
-    }
-    if ("selectedChatId" in bSettings && bSettings["selectedChatId"] != 0) {
-      selectedChatId = bSettings["selectedChatId"];
-      setTimeout(function() {
+      if ("selectedChatId" in bSettings && bSettings["selectedChatId"] != 0) {
+        selectedChatId = bSettings["selectedChatId"];
         log("Selezionata chat_id "+selectedChatId+" come da sessione precedente.", "[INFO]", "yellow-text");
-      }, 0)
+      }
+      if ("logAllMsg" in bSettings)
+        $("#logAllMsg").prop("checked", bSettings["logAllMsg"]);
+      if ("ufUpdAnalyzer" in bSettings)
+        $("#ufUpdAnalyzer").prop("checked", bSettings["ufUpdAnalyzer"]);
     }
-    if ("logAllMsg" in bSettings)
-      $("#logAllMsg").prop("checked", bSettings["logAllMsg"]);
-    if ("ufUpdAnalyzer" in bSettings)
-      $("#ufUpdAnalyzer").prop("checked", bSettings["ufUpdAnalyzer"]);
-  }
-  M.textareaAutoResize($('#commands'));
-  M.updateTextFields();
-  $("#console").html("");
-  $(".tooltipped").tooltip();
-  $('select').formSelect();
+    M.textareaAutoResize($('#commands'));
+    M.updateTextFields();
+    $("#console").html("");
+    $(".tooltipped").tooltip();
+    $('select').formSelect();
+    $(".modal").modal();
+  }, 0);
   updateCommands(false);
 });
 function updateCommands(doLog = true) {

@@ -60,6 +60,7 @@
             </div>
           </div>
           <div class="row">
+            <a class="modal-trigger" href="#helpCommands"><i class="material-icons right black-text">help_outline</i></a>
             <div class="input-field col s12">
               <textarea id="commands" class="materialize-textarea"></textarea>
               <label for="commands">Comandi del bot</label>
@@ -118,7 +119,7 @@
                   <span class="lever"></span>
                 </label>
               </div><br />
-              <div class="switch tooltipped" data-tooltip="Non consigliato su computer lenti, rimuove il timeout di 500 millisecondi nell'update analyzer." data-position="right">
+              <div class="switch tooltipped" data-tooltip="Non consigliato su computer lenti, rimuove il timeout di 500 millisecondi nell'update analyzer." data-position="top">
                 <label for="ufUpdAnalyzer">Ultra fast update analyzer</label>
                 <label>
                   <input type="checkbox" id="ufUpdAnalyzer">
@@ -135,6 +136,20 @@
       <li class="active"><a class="waves-effect" href="/tg-js-bot"><i class="material-icons left">sms</i>Easy Telegram Bot</a></li>
       <li><a class="waves-effect" href="/PatoBot"><i class="material-icons left">code</i>PatoBot</a></li>
     </ul>
+    <div class="modal" id="helpCommands">
+      <div class="modal-content">
+        <h4>Help comandi</h4>
+        <p>
+          /comando > Risposta<strong>;</strong><br>
+          Nella risposta, puoi usare <strong>photo file_id/url</strong> per inviare una foto, o un semplice testo per inviare una risposta testuale.<br>
+          Saranno aggiunti altri tipi di documenti/video presto.<br>
+          Per ricevere il file_id di una foto, manda una foto al tuo bot con descrizione /fileid
+        </p>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-light btn-flat">OK</a>
+      </div>
+    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" defer></script>
     <script src="js/main.js" defer></script>
