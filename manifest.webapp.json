@@ -1,0 +1,26 @@
+{
+  "short_name": "EasyJSBot",
+  "name": "Telegram Easy JS Bot",
+  "icons": [
+    {
+      "src": "./icons/logo-32.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    },
+    {
+      "src": "./icons/logo-64.png",
+      "type": "image/png",
+      "sizes": "64x64"
+    },
+    {
+      "src": "./icons/logo-128.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    }
+  ],
+  "start_url": "/tg-js-bot/index.html",
+  "background_color": "#1e88e5",
+  "display": "standalone",
+  "scope": "/tg-js-bot/",
+  "theme_color": "#1e88e5"
+}
