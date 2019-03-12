@@ -151,7 +151,7 @@ function startUpdateAnalyzer() {
         updateOffset = update["update_id"];
         analyzeUpdate(update);
         updateOffset++;
-      },
+      }
       if(started == 0) {
         localStorage.setItem("botToken", $("#token").val());
         log("Bot avviato! Attenzione: Se chiudi questa pagina, verrà anche arrestato il tuo bot!", "[INFO]", "blue-text");
@@ -159,7 +159,7 @@ function startUpdateAnalyzer() {
         $("#stopBot").prop("disabled", false);
         request("getMe", {}, function(response) {
           botUsername = response["result"]["username"];
-        })
+        });
         started = 1;
       }
       if(started == "stop") {
@@ -168,12 +168,11 @@ function startUpdateAnalyzer() {
         started = 0;
       } else setTimeout(startUpdateAnalyzer, ($("#ufUpdAnalyzer").prop("checked")) ? 0 : 500);
     }, function(xhr) {
-      var response = xhr.responseText;
-      log("Errore nella connessione: "+response+"<br />Possibile token errato.", "[ERRORE]", "red-text");
-      $("#stopBot").prop("disabled", true);
-      $("#startBot").prop("disabled", false);
-      started = 0;
-    });
+    var response = xhr.responseText;
+    log("Errore nella connessione: "+response+"<br />Possibile token errato.", "[ERRORE]", "red-text");
+    $("#stopBot").prop("disabled", true);
+    $("#startBot").prop("disabled", false);
+    started = 0;
   });
 }
 function updateBotSettings() {
