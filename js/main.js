@@ -25,6 +25,9 @@ $(document).ready(function() {
   $("#applyChatId").on("click", function() {
     sendCommand("/select "+$("#selectChatId").val());
   });
+  $("#removeChatId").on("click", function() {
+    sendCommand("/select 0");
+  });
   $("#autoStart").on("change", updateBotSettings);
   $("#logAllMsg").on("change", updateBotSettings);
   $("#parseMode").on("change", updateBotSettings);
@@ -304,7 +307,10 @@ function sendCommand(command) {
         var cId = command.splitTwo(" ");
         if (1 in cId && cId[1]) {
           selectedChatId = cId[1];
-          log("Selezionato "+selectedChatId+"!", "[INFO]", "green-text");
+          if (selectedChatId == 0)
+            log("Rimossa selezione chat_id!", "[INFO]", "green-text");
+          else
+            log("Selezionato "+selectedChatId+"!", "[INFO]", "green-text");
           updateBotSettings();
         } else {
           if($.isEmptyObject(knownChatIDs))
