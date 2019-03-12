@@ -193,6 +193,7 @@ function analyzeUpdate(update) {
   var chat_id = 0;
   var name = "";
   var chat_name;
+  var chat_title;
   if ("message" in update)
     message = update["message"];
   else
