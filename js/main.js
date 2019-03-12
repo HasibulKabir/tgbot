@@ -160,6 +160,7 @@ function updateAnalyzer() {
         $("#startBot").prop("disabled", false);
         log("Bot arrestato!", "[INFO]", "blue-text");
         started = 0;
+        return true;
       } else setTimeout(updateAnalyzer, ($("#ufUpdAnalyzer").prop("checked")) ? 0 : 500);
       if(response["result"] !== [] && response["result"] && response["result"].length > 0) {
         update = response["result"][0];
@@ -178,7 +179,7 @@ function updateAnalyzer() {
           request("getMe", {}, function(response) {
             botInfo = response["result"];
             botUsername = botInfo["username"];
-            log("Info Bot:\nNome: "+botInfo["first_name"]+"\nUsername: <a href=\"https://t.me/"+botUsername+"\">@"+botUsername+"</a>");
+            log("Info Bot:<br>Nome: "+$("<div>").text(botInfo["first_name"]).html()+"<br>Username: <a href=\"https://t.me/"+botUsername+"\">@"+botUsername+"</a>");
           });
         }, 0);
         started = 1;
@@ -273,11 +274,11 @@ function analyzeUpdate(update) {
   var replace = [
     message["chat"]["id"],
     message["from"]["id"],
-    chat_name,
-    name,
-    message["from"]["first_name"],
-    last_name,
-    text
+    $("<div>").text(chat_name).html(),
+    $("<div>").text(name).html(),
+    $("<div>").text(message["from"]["first_name"]).html(),
+    $("<div>").text(last_name).html(),
+    $("<div>").text(text).html()
   ];
   if(caption == "/fileid") {
     sendMessage(chat_id, "FileID: <code>" + maxPhotoSize + "</code>", false, "HTML");
