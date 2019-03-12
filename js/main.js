@@ -142,29 +142,16 @@ function updateCommands(doLog = true) {
   $("#updateCommands").prop("disabled", false);
 }
 function startUpdateAnalyzer() {
-  $.ajax({
-    url: "https://api.telegram.org/bot" + botToken + "/getUpdates",
-    async: true,
-    method: "POST",
-    data: {
+  request("getUpdates",{
       offset: updateOffset
-    },
-    dataType: "json",
-    error: function(xhr) {
-      var response = xhr.responseText;
-      log("Errore nella connessione: "+response+"<br />Possibile token errato.", "[ERRORE]", "red-text");
-      $("#stopBot").prop("disabled", true);
-      $("#startBot").prop("disabled", false);
-      started = 0;
-    },
-    success: function(response) {
+    }, function(response) {
       var update = {};
       if(response["result"] !== [] && response["result"] && response["result"].length > 0) {
         update = response["result"][0];
         updateOffset = update["update_id"];
         analyzeUpdate(update);
         updateOffset++;
-      }
+      },
       if(started == 0) {
         localStorage.setItem("botToken", $("#token").val());
         log("Bot avviato! Attenzione: Se chiudi questa pagina, verrà anche arrestato il tuo bot!", "[INFO]", "blue-text");
@@ -180,7 +167,13 @@ function startUpdateAnalyzer() {
         log("Bot arrestato!", "[INFO]", "blue-text");
         started = 0;
       } else setTimeout(startUpdateAnalyzer, ($("#ufUpdAnalyzer").prop("checked")) ? 0 : 500);
-    }
+    }, function(xhr) {
+      var response = xhr.responseText;
+      log("Errore nella connessione: "+response+"<br />Possibile token errato.", "[ERRORE]", "red-text");
+      $("#stopBot").prop("disabled", true);
+      $("#startBot").prop("disabled", false);
+      started = 0;
+    });
   });
 }
 function updateBotSettings() {
@@ -204,9 +197,11 @@ function analyzeUpdate(update) {
     message = update["message"];
   else
     message = {};
-  if ("chat" in message)
-    chat_id = update["message"]["chat"]["id"];
-  else {
+  if ("chat" in message) {
+    chat_id = message["chat"]["id"];
+    if("title" in message["chat"])
+      chat_title = message["chat"]["title"];
+  } else {
     log("Messaggio non supportato", "[WARNING]", "yellow-text");
     return false;
   }
@@ -231,11 +226,15 @@ function analyzeUpdate(update) {
     if("last_name" in message["from"])
       name += " "+message["from"]["last_name"];
   }
+  if(chat_title) {
+    name = chat_title + ": " + name;
+    chat_name = chat_title;
+  } else chat_name = name;
   if(selectedChatId == chat_id || $("#logAllMsg").prop("checked")) {
     if(text)
-      log(text, "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
+      log(text, "["+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
   }
-  knownChatIDs[chat_id] = name;
+  knownChatIDs[chat_id] = chat_name;
   if(text == "/chatid") {
     sendMessage(chat_id, "ID della chat: <code>"+chat_id+"</code>", false, "HTML");
   }
@@ -301,7 +300,7 @@ function sendCommand(command) {
   if(botToken != "" && botToken && started == 1)
     switch(command.splitTwo(" ",1)[0]) {
       case "/help":
-        log("Menù comandi:<br />/help: visualizza questo menù di aiuto<br />/select &lt;chat_id&gt;: seleziona chat in cui inviare i messaggi<br />&lt;messaggio&gt;: invia messaggio nella chat_id selezionata", "");
+        log("Menù comandi:<br />/help: visualizza questo menù di aiuto<br />/select: GUI per selezionare la chat in cui inviare i messaggi<br />&lt;messaggio&gt;: invia messaggio nella chat_id selezionata", "");
         break;
       case "/select":
         var cId = command.splitTwo(" ");
