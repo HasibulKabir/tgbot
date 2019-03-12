@@ -223,7 +223,7 @@ function analyzeUpdate(update) {
   var chat_title;
   var is_group = false;
   var last_name;
-  log("Analysing update: "+JSON.stringify(update), "[DEBUG]");
+  if(debug) log("Analysing update: "+JSON.stringify(update), "[DEBUG]");
   if ("message" in update)
     message = update["message"];
   else
