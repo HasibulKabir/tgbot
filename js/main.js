@@ -296,7 +296,7 @@ function sendMessage(chat_id, messageText, doLog = false, parse_mode = false) {
         chat_id: chat_id,
         text: messageText,
         parse_mode: parse_mode,
-        disable_web_page_preview: $("wpPreview").val()
+        disable_web_page_preview: $("#wpPreview").val()
       };
       request("sendMessage", args, function(response) {
         if(doLog) log(response.result.text, "[Messaggio inviato: "+chat_id+"]", "green-text");
