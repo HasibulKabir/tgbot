@@ -11,6 +11,7 @@ var selectedChatId = 0;
 var lastCommand = "";
 var botUsername = "";
 var knownChatIDs = {};
+var botInfo;
 String.prototype.splitTwo = function(by) {
   var arr = this.split(by);
   var str = this.substr(arr[0].length + by.length);
@@ -173,9 +174,13 @@ function updateAnalyzer() {
         log("Bot avviato! Attenzione: Se chiudi questa pagina, verrà anche arrestato il tuo bot!", "[INFO]", "blue-text");
         log("/help per i comandi della console.");
         $("#stopBot").prop("disabled", false);
-        request("getMe", {}, function(response) {
-          botUsername = response["result"]["username"];
-        });
+        setTimeout(function() {
+          request("getMe", {}, function(response) {
+            botInfo = response["result"];
+            botUsername = botInfo["username"];
+            log("Info Bot:\nNome: "+botInfo["first_name"]+"\nUsername: <a href=\"https://t.me/"+botUsername+"\">@"+botUsername+"</a>");
+          });
+        }, 0);
         started = 1;
       }
     }, function(xhr) {
@@ -222,7 +227,7 @@ function analyzeUpdate(update) {
     return false;
   }
   if ("text" in message) {
-    if(message["text"].indexOf(0) == "/")
+    if(message["text"].charAt(0) == "/")
       text = message["text"].replace("@"+botUsername, "");
     else
       text = message["text"];
