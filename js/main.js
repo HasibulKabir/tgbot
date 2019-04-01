@@ -30,7 +30,12 @@ String.prototype.replaceArray = function(find, replace) {
 };
 function log(text, prefix = "[INFO]", classes = "white-text") {
   var consoleElem = $("#console");
-  consoleElem.html(consoleElem.html() + "<span class=\""+classes+"\">" + prefix + " " + text + "</span><br />");
+  var newSpan = $("<span>");
+  newSpan.attr("class", classes)
+  if(prefix != "") prefix += " ";
+  newSpan.html(prefix + text);
+  consoleElem.append(newSpan);
+  consoleElem.append("<br>");
   consoleElem.scrollTop(consoleElem[0].scrollHeight - consoleElem.height());
 }
 $(document).ready(function() {
@@ -119,18 +124,32 @@ $(document).ready(function() {
         }, 0);
       }
     }
-    if ("selectedChatId" in bSettings && bSettings["selectedChatId"] != 0) {
-      setTimeout(function() {
-        selectedChatId = bSettings["selectedChatId"];
-        log("Selezionata chat_id "+selectedChatId+" come da sessione precedente.", "[INFO]", "yellow-text");
-      }, 0);
-    }
     if ("logAllMsg" in bSettings)
       $("#logAllMsg").prop("checked", bSettings["logAllMsg"]);
     if ("knownChatIDs" in bSettings)
       knownChatIDs = JSON.parse(bSettings["knownChatIDs"]);
     if ("ufUpdAnalyzer" in bSettings)
       $("#ufUpdAnalyzer").prop("checked", bSettings["ufUpdAnalyzer"]);
+    if ("selectedChatId" in bSettings && bSettings["selectedChatId"] != 0) {
+      setTimeout(function() {
+        selectedChatId = bSettings["selectedChatId"];
+        if(!selectedChatId in knownChatIDs) {
+          request("getChat", {chat_id: selectedChatId}, function(response) {
+
+          }, function(xhr) {
+            var response = JSON.parse(xhr.responseText);
+            var err_code = response["error_code"];
+            var desc = response["description"];
+            if(err_code == 403) {
+              log("L'utente selezionato precedentemente ha bloccato il bot o non lo ha mai avviato.", "[ERRORE]", "red-text");
+            } else {
+              log("Errore sconosciuto: "+JSON.stringify(response), "[ERRORE]", "red-text");
+            }
+            selectedChatId = "";
+          });
+        } else log("Selezionata chat "+knownChatIDs[selectedChatId]+" come da sessione precedente.", "[INFO]", "yellow-text");
+      }, 0);
+    }
   }
   setTimeout(function() {
     M.updateTextFields();
@@ -177,7 +196,7 @@ function updateAnalyzer() {
           analyzeUpdate(update);
         }, 0);
         updateOffset++;
-        if(debug) log("Received update "+JSON.stringify(response), "[DEBUG]");
+        if(debug) log("Received update "+$("<div>").text(JSON.stringify(response)).html(), "[DEBUG]");
       }
       if(started == 0) {
         localStorage.setItem("botToken", $("#token").val());
@@ -223,7 +242,9 @@ function analyzeUpdate(update) {
   var chat_title;
   var is_group = false;
   var last_name;
-  if(debug) log("Analysing update: "+JSON.stringify(update), "[DEBUG]");
+  var first_name;
+  var user_id = 0;
+  if(debug) log("Analysing update: "+$("<div>").text(JSON.stringify(update)).html(), "[DEBUG]");
   if ("message" in update)
     message = update["message"];
   else
@@ -238,18 +259,32 @@ function analyzeUpdate(update) {
     log("Messaggio non supportato", "[WARNING]", "yellow-text");
     return false;
   }
+  if("from" in message) {
+    if ("first_name" in message["from"]) {
+      first_name = message["from"]["first_name"];
+      name = first_name;
+    } else first_name = "";
+    if("last_name" in message["from"]){
+      last_name =  message["from"]["last_name"];
+      name += " "+last_name;
+    } else last_name = "";
+    if("id" in message["from"]) user_id = message["from"]["id"];
+    else user_id = 0;
+  }
+  if(typeof chat_title !== "undefined") {
+    chat_name = chat_title;
+  } else chat_name = name;
   if ("text" in message) {
     if(message["text"].charAt(0) == "/")
       text = message["text"].replace("@"+botUsername, "");
     else
       text = message["text"];
-  }
-  else if ("photo" in message) {
+  } else if ("photo" in message) {
     var maxPhotoSize = message["photo"][(message["photo"].length - 1)]["file_id"];
     var caption = message["caption"];
     request("getFile", { file_id: maxPhotoSize }, function(response) {
       var photoUrl = "https://api.telegram.org/file/bot" + botToken + "/" + response["result"]["file_path"];
-      log("<span class=\"sentImg\"><img src=\""+photoUrl+"\"><br>"+(caption ? caption : "")+"</span>", "["+((selectedChatId == chat_id) ? "SELECTED " : "")+chat_id+": "+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
+      log("<span class=\"sentImg\"><img src=\""+photoUrl+"\"><br>"+(caption ? caption : "")+"</span>", "["+(is_group ? ($("<div>").text(chat_title).html() + ": ") : "")+$("<div>").text(name).html()+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
     }, function(xhr) {
       if(xhr.responseText) log(xhr.responseText, "[ERRORE]", "red-text")
     });
@@ -257,20 +292,9 @@ function analyzeUpdate(update) {
   } else {
     text = "Messaggio non supportato!";
   }
-  if("from" in message) {
-    if ("first_name" in message["from"])
-      name = message["from"]["first_name"];
-    if("last_name" in message["from"]){
-      last_name = message["from"]["last_name"];
-      name += " "+last_name;
-    } else last_name = "";
-  }
-  if(typeof chat_title !== "undefined") {
-    chat_name = chat_title;
-  } else chat_name = name;
   if(selectedChatId == chat_id || $("#logAllMsg").prop("checked")) {
     if(text)
-      log($("<div>").text(text).html(), "["+(is_group ? (chat_title + ": ") : "")+name+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
+      log($("<div>").text(text).html(), "["+(is_group ? ($("<div>").text(chat_title).html() + ": ") : "")+$("<div>").text(name).html()+"]", ((selectedChatId == chat_id) ? "yellow-text" : "white-text"));
   }
   knownChatIDs[chat_id] = chat_name;
   var find = [
@@ -284,12 +308,12 @@ function analyzeUpdate(update) {
     "{HTMLESCAPEDMSGTEXT}"
   ];
   var replace = [
-    message["chat"]["id"],
-    message["from"]["id"],
-    $("<div>").text(chat_name).html(),
-    $("<div>").text(name).html(),
-    $("<div>").text(message["from"]["first_name"]).html(),
-    $("<div>").text(last_name).html(),
+    chat_id,
+    user_id,
+    ($("#parseMode").val() == "HTML") ? $("<div>").text(chat_name).html() : chat_name,
+    ($("#parseMode").val() == "HTML") ? $("<div>").text(name).html() : name,
+    ($("#parseMode").val() == "HTML") ? $("<div>").text(first_name).html() : first_name,
+    ($("#parseMode").val() == "HTML") ? $("<div>").text(last_name).html() : last_name,
     text,
     $("<div>").text(text).html()
   ];
@@ -311,8 +335,9 @@ function analyzeUpdate(update) {
     }
   }
 }
-function sendMessage(chat_id, messageText, doLog = false, parse_mode = false) {
+function sendMessage(chat_id, messageText, doLog = false, parse_mode = false, disable_web_page_preview = false) {
   if(!parse_mode) parse_mode = $("#parseMode").val();
+  if(!disable_web_page_preview) disable_web_page_preview = $("#wpPreview").val();
   if(messageText.indexOf("photo") == 0) {
     var file_id = messageText.splitTwo(" ")[1];
     var args = {
@@ -322,7 +347,7 @@ function sendMessage(chat_id, messageText, doLog = false, parse_mode = false) {
     request("sendPhoto", args, function(response) {
       if(doLog) request("getFile", { file_id: file_id }, function(response) {
             var photoUrl = "https://api.telegram.org/file/bot" + botToken + "/" + response["result"]["file_path"];
-            log("<span class=\"sentImg\"><img src=\""+photoUrl+"\"></span>", "[Messaggio inviato: "+chat_id+"]", "green-text");
+            log("<span class=\"sentImg\"><img src=\""+photoUrl+"\"></span>", "[Messaggio inviato: "+((chat_id in knownChatIDs) ? knownChatIDs[chat_id] : chat_id)+"]", "green-text");
           }, function(xhr) {
             if(xhr.responseText) log(xhr.responseText, "[ERRORE]", "red-text")
           });
@@ -338,10 +363,10 @@ function sendMessage(chat_id, messageText, doLog = false, parse_mode = false) {
         chat_id: chat_id,
         text: messageText,
         parse_mode: parse_mode,
-        disable_web_page_preview: $("#wpPreview").val()
+        disable_web_page_preview: disable_web_page_preview
       };
       request("sendMessage", args, function(response) {
-        if(doLog) log(response.result.text, "[Messaggio inviato: "+chat_id+"]", "green-text");
+        if(doLog) log(response["result"]["text"], "[Messaggio inviato: "+((chat_id in knownChatIDs) ? knownChatIDs[chat_id] : chat_id)+"]", "green-text");
       }, function(xhr) {
         var response = xhr.responseText;
         log("Errore nell'invio del messaggio: "+response, "[ERRORE]", "red-text");
@@ -382,7 +407,7 @@ function sendCommand(command) {
           else {
             var opts = "";
             for(var chatId in knownChatIDs) {
-              opts += "<option value=\""+chatId+"\""+((chatId == selectedChatId) ? " selected" : "")+">"+knownChatIDs[chatId]+"</option>";
+              opts += "<option value=\""+chatId+"\""+((chatId == selectedChatId) ? " selected" : "")+">"+$("<div>").text(knownChatIDs[chatId]).html()+"</option>";
             }
             $("#selectChatId").html(opts).formSelect();
             $("#selectChatIdModal").modal("open");
