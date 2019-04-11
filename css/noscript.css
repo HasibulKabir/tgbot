@@ -1,0 +1,7 @@
+#nojs {
+    display: block;
+    font-size: 2em;
+}
+#loader {
+    display: none;
+}

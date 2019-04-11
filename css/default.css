@@ -1,6 +1,9 @@
 .botSettings * {
   display: inline-block;
 }
+#nojs {
+    display: none;
+}
 .switch label input[type=checkbox]:checked + .lever {
   background: #42a5f5 !important;
 }
