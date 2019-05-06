@@ -6,10 +6,10 @@
     <!-- Tags for search engines -->
     <meta name="author" content="ItzPatoo">
     <meta name="og:title" content="Easy Telegram bot in JS">
-    <meta name="og:description" content="Con questo sito puoi creare facilmente un bot telegram con il semplicissimo utilizzo del tuo browser! presente anche la console per inviare messaggi e riceverli!">
-    <meta name="description" content="Con questo sito puoi creare facilmente un bot telegram con il semplicissimo utilizzo del tuo browser! presente anche la console per inviare messaggi e riceverli!">
+    <meta name="og:description" content="With this site you can easily create a telegram bot with the simple use of your browser! also present the console to send messages and receive them!">
+    <meta name="description" content="With this site you can easily create a telegram bot with the simple use of your browser! also present the console to send messages and receive them!">
     <meta name="application-name" content="Easy Telegram bot in JS">
-    <meta name="keywords" content="TelegramBotJS JSTelegramBot TelegramBot Telegram Bot Javascript">
+    <meta name="keywords" content="Telegram Bot Javascript">
     <meta name="msvalidate.01" content="ADB52CE29F47DB2CAC8C8CA03E19D6F2" />
     <meta name="google-site-verification" content="G6L1GP4TRLb_GtzjCEp_BdXKVolnBiQQh4deUUKHyis" />
     <!-- End -->
@@ -26,7 +26,7 @@
     <link rel="manifest" href="manifest.webapp.json">
     <!-- End -->
 
-    <title>Telegram JS Easy Bot</title>
+    <title>Telegram JavaScript Bot Crator</title>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" as="style">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="preload" as="style">
     <link rel="preload" href="css/default.css" as="style">
@@ -47,7 +47,7 @@
     <main>
       <nav class="blue darken-1">
         <div class="nav-wrapper">
-          <a href="#" class="brand-logo center">Easy JS Bot</a>
+          <a href="#" class="brand-logo center">Telegram JavaScript Bot</a>
           <a href="#" data-target="sidebar-slide" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
         </div>
       </nav>
@@ -55,18 +55,18 @@
         <div class="card-panel">
           <div class="row">
             <i class="material-icons right tooltipped black-text"
-              data-tooltip="Inserisci qui il token che ti è stato inviato da @BotFather su Telegram"
+              data-tooltip="Enter here the token that was sent to you by @BotFather on Telegram"
               data-position="bottom">help_outline</i>
             <div class="input-field col s12">
               <input id="token" type="text" class="validate" required>
-              <label for="token">Token del bot</label>
+              <label for="token">Bot token</label>
             </div>
           </div>
           <div class="row">
             <a class="modal-trigger" href="#helpCommands"><i class="material-icons right black-text">help_outline</i></a>
             <div class="input-field col s12">
               <textarea id="commands" class="materialize-textarea"></textarea>
-              <label for="commands">Comandi del bot</label>
+              <label for="commands">Bot commands</label>
             </div>
           </div>
           <div class="row">
@@ -101,28 +101,28 @@
           </div>
           <div class="row">
             <div class="col s12">
-              <button class="btn blue waves-effect waves-light" id="updateCommands" style="display: none;">Aggiorna lista comandi</button>
-              <button class="btn blue waves-effect waves-light" id="startBot">Avvia!</button>
-              <button class="btn blue waves-effect waves-light" id="stopBot" disabled>Arresta</button>
+              <button class="btn blue waves-effect waves-light" id="updateCommands" style="display: none;">Update command list</button>
+              <button class="btn blue waves-effect waves-light" id="startBot">Start!</button>
+              <button class="btn blue waves-effect waves-light" id="stopBot" disabled>stops</button>
             </div>
           </div>
           <div class="row botSettings">
             <div class="col s12">
               <div class="switch">
-                <label for="autoStart">Avvia automaticamente il bot al caricamento della pagina</label>
+                <label for="autoStart">Automatically starts the bot when the page loads</label>
                 <label>
                   <input type="checkbox" id="autoStart">
                   <span class="lever"></span>
                 </label>
               </div><br />
               <div class="switch">
-                <label for="logAllMsg">Logga i messaggi da qualsiasi chat</label>
+                <label for="logAllMsg">Log messages from any chat</label>
                 <label>
                   <input type="checkbox" id="logAllMsg">
                   <span class="lever"></span>
                 </label>
               </div><br />
-              <div class="switch tooltipped" data-tooltip="Non consigliato su computer lenti, rimuove il timeout di 500 millisecondi nell'update analyzer." data-position="top">
+              <div class="switch tooltipped" data-tooltip="Not recommended on slow computers, it removes the 500 millisecond timeout in the'update analyzer." data-position="top">
                 <label for="ufUpdAnalyzer">Ultra fast update analyzer</label>
                 <label>
                   <input type="checkbox" id="ufUpdAnalyzer">
@@ -136,9 +136,9 @@
       <footer class="page-footer blue darken-1">
         <div class="container">
           <div class="row">
-            <h4 class="left">EasyJSBot</h4>
+            <h4 class="left"> Telegram JavaScript Bot</h4>
             <h4 class="right">
-              <a class="waves-effect waves-light white-text" href="https://github.com/Pato05/tg-js-bot">
+              <a class="waves-effect waves-light white-text" href="https://github.com/hasibulkabir/tgbot">
                 GitHub
               </a>
             </h4>
